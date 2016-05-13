@@ -8,7 +8,7 @@ abstract class AbstractRequest
 {
     /**
      * @param array $request
-     * @return mixed
+     * @return AbstractResponse
      */
     abstract protected function sendRequest(array $request);
 
