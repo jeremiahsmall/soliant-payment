@@ -25,7 +25,7 @@
         "php": ">=5.5.0",
         "ext-curl": "*",
         "authorizenet/authorizenet": "1.8.8",
-        "jms/serializer": "0.18.0",
+        "jms/serializer": "1.1.0",
         "zendframework/zend-modulemanager": "^2.5",
         "zendframework/zend-servicemanager": "^2.5",
         "zendframework/zend-stdlib": "^2.5",
