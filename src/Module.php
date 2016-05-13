@@ -1,5 +1,5 @@
 <?php
-namespace PaymentBase;
+namespace Soliant\PaymentBase;
 
 class Module
 {

@@ -5,6 +5,10 @@ return [
         'routes' => [],
     ],
     'service_manager' => [
+        'invokables' => [
+            Soliant\PaymentBase\Payment\Request\AbstractRequest::class =>
+                Soliant\PaymentBase\Payment\Request\AbstractRequest::class,
+        ],
         'factories' => [],
     ],
     'controllers' => [
