@@ -1,0 +1,8 @@
+<?php
+return [
+'authnet_payment' => [
+        'login' => '6wzxkU29uXdg',
+        'key' => '2P3DP69PW3sah5p2',
+        'mode' => 'sandbox', // (production,sandbox)
+    ],
+];
