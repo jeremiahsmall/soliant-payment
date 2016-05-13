@@ -9,6 +9,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class AbstractPaymentServiceFactory implements AbstractFactoryInterface
 {
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @return bool
+     */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
         $config = $serviceLocator->get('config');
@@ -22,12 +28,18 @@ class AbstractPaymentServiceFactory implements AbstractFactoryInterface
         return (class_exists($config['payment_base']['services'][$requestedName]));
     }
 
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @return array|object
+     */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
         $config = $serviceLocator->get('config');
 
         $requestedClassName = $config['payment_base']['services'][$requestedName];
-        $requestedClass = new $requestedClassName();
+        $requestedClass = $serviceLocator->get($requestedClassName);
 
         if (!($requestedClass instanceof AbstractRequest)) {
             throw new RuntimeException(sprintf(
