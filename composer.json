@@ -31,10 +31,6 @@
         "zendframework/zend-stdlib": "^2.5",
         "zendframework/zend-http": "^2.5"
     },
-    "require-dev": {
-        "goetas/xsd2php": "2.*@dev",
-        "goetas/xsd-reader": "2.*@dev"
-    },
     "autoload": {
         "psr-4": {
             "Soliant\\AuthnetPayment\\": "src/"
