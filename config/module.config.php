@@ -5,9 +5,14 @@ return [
         'routes' => [],
     ],
     'service_manager' => [
+        'abstract_factories' => [
+            \Soliant\PaymentBase\Payment\Service\AbstractPaymentServiceFactory::class,
+        ],
         'invokables' => [
-            Soliant\PaymentBase\Payment\Request\AbstractRequest::class =>
-                Soliant\PaymentBase\Payment\Request\AbstractRequest::class,
+            \Soliant\PaymentBase\Payment\Request\AbstractRequest::class =>
+                \Soliant\PaymentBase\Payment\Request\AbstractRequest::class,
+            \Soliant\PaymentBase\Payment\Response\AbstractResponse::class =>
+                \Soliant\PaymentBase\Payment\Response\AbstractResponse::class,
         ],
         'factories' => [],
     ],
