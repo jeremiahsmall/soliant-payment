@@ -6,7 +6,6 @@
         "Authorize.net",
         "AuthNet"
     ],
-    "homepage": "",
     "license": "MIT",
     "authors": [
         {"name": "Steve Bennett", "email": "sbennett@soliantconsulting.com"}
@@ -25,8 +24,9 @@
         "php": ">=5.5.0",
         "ext-curl": "*",
         "authorizenet/authorizenet": "1.8.8",
-        "goetas/xsd2php":"2.0.0-alpha",
-        "jms/serializer": "xsd2php-alpha as 0.18.0",
+        "goetas/xsd2php": "2.*@dev",
+        "goetas/xsd-reader": "2.*@dev",
+        "jms/serializer": "xsd2php-dev as 0.18.0",
         "zendframework/zend-modulemanager": "^2.5",
         "zendframework/zend-servicemanager": "^2.5",
         "zendframework/zend-stdlib": "^2.5",
