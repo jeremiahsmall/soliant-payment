@@ -10,10 +10,10 @@ abstract class AbstractRequest
      * @param array $request
      * @return AbstractResponse
      */
-    abstract protected function sendRequest(array $request);
+    abstract public function sendRequest(array $request);
 
     /**
      * @return AbstractResponse
      */
-    abstract protected function getResponse();
+    abstract public function getResponse();
 }

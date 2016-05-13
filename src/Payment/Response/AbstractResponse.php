@@ -7,15 +7,15 @@ abstract class AbstractResponse
     /**
      * @return bool
      */
-    abstract protected function isSuccess();
+    abstract public function isSuccess();
 
     /**
      * @return array
      */
-    abstract protected function getMessages();
+    abstract public function getMessages();
 
     /**
      * @return array
      */
-    abstract protected function getData();
+    abstract public function getData();
 }
