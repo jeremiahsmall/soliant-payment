@@ -30,7 +30,8 @@
         "zendframework/zend-modulemanager": "^2.5",
         "zendframework/zend-servicemanager": "^2.5",
         "zendframework/zend-stdlib": "^2.5",
-        "zendframework/zend-http": "^2.5"
+        "zendframework/zend-http": "^2.5",
+        "soliantconsulting/paymentbase": "dev-master"
     },
     "autoload": {
         "psr-4": {
