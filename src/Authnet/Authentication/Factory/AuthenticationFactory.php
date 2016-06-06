@@ -19,7 +19,7 @@ class AuthenticationFactory implements FactoryInterface
             throw new OutOfBoundsException('AuthnetPayment authentication key not configured.');
         }
 
-        $merchantAuthentication =  new MerchantAuthenticationType();
+        $merchantAuthentication = new MerchantAuthenticationType();
         $merchantAuthentication->setName($config['authnet_payment']['login']);
         $merchantAuthentication->setTransactionKey($config['authnet_payment']['key']);
 

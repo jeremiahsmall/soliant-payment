@@ -2,12 +2,13 @@
 namespace Soliant\AuthnetPayment\Authnet\Request\Factory;
 
 use OutOfBoundsException;
-use Soliant\AuthnetPayment\Authnet\Request\AuthCaptureRequest;
+use Soliant\AuthnetPayment\Authnet\Authentication\Authentication;
+use Soliant\AuthnetPayment\Authnet\Request\AuthorizeAndCaptureService;
 use Soliant\AuthnetPayment\Authnet\Request\TransactionMode;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AuthCaptureRequestFactory implements FactoryInterface
+class AuthorizeAndCaptureServiceFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
@@ -20,8 +21,8 @@ class AuthCaptureRequestFactory implements FactoryInterface
             throw new OutOfBoundsException('AuthnetPayment authentication mode not configured.');
         }
 
-        return new AuthCaptureRequest(
-            $serviceLocator->get('Soliant\AuthnetPayment\Authnet\Authentication\Authentication'),
+        return new AuthorizeAndCaptureService(
+            $serviceLocator->get(Authentication::class),
             $serviceLocator->get(TransactionMode::class),
             $serviceLocator->get($config['authnet_payment']['service']['authorizationAndCapture']['field_map'])
         );

@@ -30,7 +30,7 @@ class AuthCaptureResponse extends AbstractResponse
     {
         $this->createTransactionResponse = $createTransactionResponse;
     }
-    
+
     public function isSuccess()
     {
         if (null === $this->createTransactionResponse) {

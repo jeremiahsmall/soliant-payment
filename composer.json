@@ -8,7 +8,10 @@
     ],
     "license": "MIT",
     "authors": [
-        {"name": "Steve Bennett", "email": "sbennett@soliantconsulting.com"}
+        {
+            "name": "Steve Bennett",
+            "email": "sbennett@soliantconsulting.com"
+        }
     ],
     "repositories": [
         {

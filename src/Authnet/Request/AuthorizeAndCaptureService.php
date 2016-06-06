@@ -8,9 +8,9 @@ use net\authorize\api\contract\v1\PaymentType;
 use net\authorize\api\contract\v1\TransactionRequestType;
 use net\authorize\api\controller\CreateTransactionController;
 use Soliant\AuthnetPayment\Authnet\Response\AuthCaptureResponse;
-use Soliant\PaymentBase\Payment\Request\AbstractRequest;
+use Soliant\PaymentBase\Payment\AbstractRequestService;
 
-class AuthCaptureRequest extends AbstractRequest
+class AuthorizeAndCaptureService extends AbstractRequestService
 {
     const FIELD_AMOUNT = 'amount';
     const FIELD_EXPIRATION_DATE = 'expirationDate';
@@ -83,10 +83,10 @@ class AuthCaptureRequest extends AbstractRequest
         $request = new CreateTransactionRequest();
         $request->setMerchantAuthentication($this->merchantAuthentication);
         $request->setTransactionRequest($transactionRequestType);
-        
+
         $controller = new CreateTransactionController($request);
         $response = $controller->executeWithApiResponse($this->transactionMode->getTransactionMode());
-        
+
         $this->authCaptureResponse = new AuthCaptureResponse($response);
         return $this->authCaptureResponse;
     }
