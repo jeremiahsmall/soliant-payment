@@ -1,10 +1,10 @@
 <?php
 
-namespace Soliant\PaymentBase\Payment\Request;
+namespace Soliant\PaymentBase\Payment;
 
 use Soliant\PaymentBase\Payment\Response\AbstractResponse;
 
-abstract class AbstractRequest
+abstract class AbstractRequestService
 {
     /**
      * @param array $request

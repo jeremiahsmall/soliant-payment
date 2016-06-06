@@ -16,14 +16,14 @@
         "zendframework/zend-modulemanager": "^2.5",
         "zendframework/zend-servicemanager": "^2.5",
         "zendframework/zend-stdlib": "^2.5"
-     },
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.3",
         "zendframework/zend-debug": "^2.5"
-     },
+    },
     "autoload": {
         "psr-4": {
-        "Soliant\\PaymentBase\\": "src/"
+            "Soliant\\PaymentBase\\": "src/"
         }
     }
 }
