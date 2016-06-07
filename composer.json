@@ -8,8 +8,8 @@
                 "composer.local.json"
             ],
             "require": [
-                "modules/PaymentBase/composer.json",
-                "modules/AuthnetPayment/composer.json"
+                "module/PaymentBase/composer.json",
+                "module/AuthnetPayment/composer.json"
             ],
             "recurse": true,
             "replace": false,
