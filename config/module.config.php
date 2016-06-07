@@ -5,9 +5,6 @@ return [
         'routes' => [],
     ],
     'service_manager' => [
-        'abstract_factories' => [
-            \Soliant\PaymentBase\Payment\Service\AbstractPaymentServiceFactory::class,
-        ],
         'invokables' => [
             Soliant\PaymentBase\Payment\AbstractRequestService::class =>
                 Soliant\PaymentBase\Payment\AbstractRequestService::class,
