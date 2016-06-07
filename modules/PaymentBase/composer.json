@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Soliant\\PaymentBase\\": "src/"
+            "Soliant\\PaymentBase\\": "src"
         }
     }
 }
