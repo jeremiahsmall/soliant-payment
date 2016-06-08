@@ -1,4 +1,5 @@
 {
+    "name": "soliantconsulting/soliant-payment",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
