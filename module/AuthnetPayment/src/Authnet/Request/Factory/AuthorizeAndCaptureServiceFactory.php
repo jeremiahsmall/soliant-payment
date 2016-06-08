@@ -1,18 +1,18 @@
 <?php
 namespace Soliant\AuthnetPayment\Authnet\Request\Factory;
 
-use Interop\Container\ContainerInterface;
 use OutOfBoundsException;
 use Soliant\AuthnetPayment\Authnet\Authentication\Factory\AuthenticationFactory;
 use Soliant\AuthnetPayment\Authnet\Request\AuthorizeAndCaptureService;
 use Soliant\AuthnetPayment\Authnet\Request\TransactionMode;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class AuthorizeAndCaptureServiceFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $container->get('Config');
+        $config = $serviceLocator->get('Config');
 
         if (!array_key_exists('authnet_payment', $config)
             && array_key_exists('service', $config['authnet_payment'])
@@ -22,8 +22,8 @@ class AuthorizeAndCaptureServiceFactory implements FactoryInterface
         }
 
         return new AuthorizeAndCaptureService(
-            $container->get(AuthenticationFactory::class),
-            $container->get(TransactionMode::class),
+            $serviceLocator->get(AuthenticationFactory::class),
+            $serviceLocator->get(TransactionMode::class),
             $config['authnet_payment']['service']['authorizationAndCapture']['field_map']
         );
     }
