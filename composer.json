@@ -20,5 +20,11 @@
             "merge-dev": true,
             "merge-extra": false
         }
+    },
+    "autoload": {
+        "psr-4": {
+            "Soliant\\AuthnetPayment\\": "module/AuthnetPayment/src/",
+            "Soliant\\PaymentBase\\": "module/AuthnetPayment/src"
+        }
     }
 }
