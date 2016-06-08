@@ -8,6 +8,9 @@
     },
     "extra": {
         "merge-plugin": {
+            "include": [
+                "composer.local.json"
+            ],
             "require": [
                 "module/PaymentBase/composer.json",
                 "module/AuthnetPayment/composer.json"
@@ -16,11 +19,6 @@
             "replace": false,
             "merge-dev": true,
             "merge-extra": false
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Application\\": "module/Application/src/"
         }
     }
 }
