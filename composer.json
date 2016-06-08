@@ -1,7 +1,23 @@
 {
     "name": "soliantconsulting/soliant-payment",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "type": "library",
+    "description": "Authoize.net XML API Library",
+    "keywords": [
+        "Authorize.net",
+        "AuthNet"
+    ],
+    "homepage": "http://github.com/soliantconsulting/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steve Bennett",
+            "email": "sbennett@soliantconsulting.com"
+        },
+        {
+            "name": "Nick Claywell",
+            "email": "nclaywell@soliantconsulting.com"
+        }
+    ],
     "require": {
         "wikimedia/composer-merge-plugin": "^1.3",
         "php": "^5.6 || ^7.0",
@@ -30,8 +46,6 @@
                 "composer.local.json"
             ],
             "require": [
-                "module/PaymentBase/composer.json",
-                "module/AuthnetPayment/composer.json"
             ],
             "recurse": true,
             "replace": false,
@@ -42,7 +56,8 @@
     "autoload": {
         "psr-4": {
             "Soliant\\AuthnetPayment\\": "module/AuthnetPayment/src/",
-            "Soliant\\PaymentBase\\": "module/AuthnetPayment/src"
+            "Soliant\\PaymentBase\\": "module/PaymentBase/src"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
