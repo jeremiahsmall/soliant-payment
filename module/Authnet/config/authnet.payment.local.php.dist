@@ -1,0 +1,21 @@
+<?php
+return [
+    'soliant_payment_authnet' => [
+        'login' => '',
+        'key' => '',
+        'mode' => 'sandbox', // (sandbox, production)
+        /*
+         * Uncomment to define a custom field map
+        'service' => [
+            'authorizationAndCapture' => [
+                'field_map' => [
+                    'paymentType' => 'paymentType', // (eCheck, creditCard)
+                    'cardNumber' => 'cardNumber',
+                    'expirationDate' => 'expirationDate',
+                    'amount' => 'amount',
+                ],
+            ],
+        ],
+        */
+    ],
+];
