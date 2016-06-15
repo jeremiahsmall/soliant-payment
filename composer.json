@@ -37,7 +37,7 @@
         "zendframework/zend-view": "^2.5"
     },
     "require-dev": {
-        "goetas/xsd2php": "2.*@dev",
+        "goetas/xsd2php": "2.0.x-dev#fdc2ab0bb3f2b3ab796ca567cf8c0f3446a7ea3a",
         "goetas/xsd-reader": "2.*@dev",
         "squizlabs/php_codesniffer": "^2.3",
         "zendframework/zend-debug": "^2.5"
@@ -63,8 +63,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Soliant\\AuthnetPayment\\": "module/AuthnetPayment/src/",
-            "Soliant\\PaymentBase\\": "module/PaymentBase/src"
+            "Soliant\\Payment\\Authnet\\": "module/Authnet/src/",
+            "Soliant\\Payment\\Base\\": "module/Base/src",
+            "Soliant\\Payment\\Demo\\": "module/Demo/src"
         }
     },
     "minimum-stability": "dev",

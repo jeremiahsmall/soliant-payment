@@ -8,9 +8,9 @@
 return [
     // This should be an array of module namespaces used in the application.
     'modules' => [
-        'Soliant\PaymentBase',
-        'Soliant\AuthnetPayment',
-        'Application',
+        'Soliant\Payment\Base',
+        'Soliant\Payment\Authnet',
+        'Soliant\Payment\Demo',
     ],
 
     // These are various options for the listeners attached to the ModuleManager
