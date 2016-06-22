@@ -4,7 +4,8 @@
     "description": "Authoize.net XML API Library",
     "keywords": [
         "Authorize.net",
-        "AuthNet"
+        "AuthNet",
+        "Payment"
     ],
     "homepage": "http://github.com/soliantconsulting/",
     "license": "MIT",
@@ -39,7 +40,8 @@
     "require-dev": {
         "goetas/xsd2php": "2.0.x-dev#fdc2ab0bb3f2b3ab796ca567cf8c0f3446a7ea3a",
         "goetas/xsd-reader": "2.*@dev",
-        "squizlabs/php_codesniffer": "^2.3",
+        "phpunit/phpunit": "^5.3",
+        "squizlabs/php_codesniffer": "^2.6",
         "zendframework/zend-debug": "^2.5"
     },
     "repositories": [
@@ -63,10 +65,26 @@
     },
     "autoload": {
         "psr-4": {
-            "Soliant\\Payment\\Authnet\\": "module/Authnet/src/",
+            "Soliant\\Payment\\Authnet\\": "module/Authnet/src",
             "Soliant\\Payment\\Base\\": "module/Base/src",
             "Soliant\\Payment\\Demo\\": "module/Demo/src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Soliant\\Payment\\AuthnetTest\\": "test/Authnet/src"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs",
+            "@test"
+        ],
+        "coveralls": "coveralls",
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

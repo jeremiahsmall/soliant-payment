@@ -101,7 +101,7 @@ class AuthorizeAndCaptureService extends AbstractRequestService
 
         $controller = new CreateTransactionController($request);
         $response = $controller->executeWithApiResponse($this->transactionMode->getTransactionMode());
-        
+
         $this->authCaptureResponse = new AuthCaptureResponse($response);
         return $this->authCaptureResponse;
     }
@@ -127,7 +127,7 @@ class AuthorizeAndCaptureService extends AbstractRequestService
             self::FIELD_PAYMENT_TYPE
         ];
 
-        foreach ($requiredField AS $key) {
+        foreach ($requiredField as $key) {
             if (!array_key_exists($key, $data)) {
                 return false;
             }
