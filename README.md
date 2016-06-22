@@ -1,12 +1,7 @@
 # Soliant Payment
 
 [![Build Status](https://travis-ci.org/soliantconsulting/SimpleFM.svg?branch=master)](https://travis-ci.org/soliantconsulting/SimpleFM)
-[![Code Climate](https://codeclimate.com/github/soliantconsulting/SimpleFM/badges/gpa.svg)](https://codeclimate.com/github/soliantconsulting/SimpleFM)
-[![Test Coverage](https://codeclimate.com/github/soliantconsulting/SimpleFM/badges/coverage.svg)](https://codeclimate.com/github/soliantconsulting/SimpleFM/coverage)
-[![Latest Stable Version](https://poser.pugx.org/soliantconsulting/simplefm/v/stable)](https://packagist.org/packages/soliantconsulting/simplefm)
-[![Latest Unstable Version](https://poser.pugx.org/soliantconsulting/simplefm/v/unstable)](https://packagist.org/packages/soliantconsulting/simplefm)
-[![Total Downloads](https://poser.pugx.org/soliantconsulting/simplefm/downloads)](https://packagist.org/packages/soliantconsulting/simplefm)
-[![License](https://poser.pugx.org/soliantconsulting/simplefm/license)](https://packagist.org/packages/soliantconsulting/simplefm)
+[![Coverage Status](https://coveralls.io/repos/github/soliantconsulting/soliant-payment/badge.svg?branch=master)](https://coveralls.io/github/soliantconsulting/soliant-payment?branch=master)
 
 ## Quickstart
 

@@ -2,6 +2,7 @@
 namespace Soliant\Payment\Authnet\Payment\Request;
 
 use net\authorize\api\constants\ANetEnvironment;
+use DomainException;
 
 class TransactionMode
 {
@@ -32,6 +33,12 @@ class TransactionMode
             case self::MODE_SANDBOX:
                 return ANetEnvironment::SANDBOX;
                 break;
+            default:
+                throw new DomainException(
+                    'Invalid transaction mode specified.  Must be "production" or "sandbox". '
+                    . $this->mode
+                    . ' provided.'
+                );
         }
     }
 }
