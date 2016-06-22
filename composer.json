@@ -83,5 +83,7 @@
         "cs-fix": "phpcbf",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover clover.xml"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
