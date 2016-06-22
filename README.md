@@ -1,6 +1,6 @@
 # Soliant Payment
 
-[![Build Status](https://travis-ci.org/soliantconsulting/SimpleFM.svg?branch=master)](https://travis-ci.org/soliantconsulting/SimpleFM)
+[![Build Status](https://travis-ci.org/soliantconsulting/soliant-payment.svg?branch=master)](https://travis-ci.org/soliantconsulting/soliant-payment)
 [![Coverage Status](https://coveralls.io/repos/github/soliantconsulting/soliant-payment/badge.svg?branch=master)](https://coveralls.io/github/soliantconsulting/soliant-payment?branch=master)
 
 ## Quickstart
