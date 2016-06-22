@@ -39,7 +39,8 @@
     "require-dev": {
         "goetas/xsd2php": "2.0.x-dev#fdc2ab0bb3f2b3ab796ca567cf8c0f3446a7ea3a",
         "goetas/xsd-reader": "2.*@dev",
-        "squizlabs/php_codesniffer": "^2.3",
+        "phpunit/phpunit": "^5.3",
+        "squizlabs/php_codesniffer": "^2.6",
         "zendframework/zend-debug": "^2.5"
     },
     "repositories": [
@@ -67,6 +68,13 @@
             "Soliant\\Payment\\Base\\": "module/Base/src",
             "Soliant\\Payment\\Demo\\": "module/Demo/src"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs"
+        ],
+        "cs": "phpcs",
+        "cs-fix": "phpcbf"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

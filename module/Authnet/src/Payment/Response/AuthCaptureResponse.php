@@ -88,7 +88,7 @@ class AuthCaptureResponse extends AbstractResponse
         $messages = [];
 
         /** @var ErrorAType $error */
-        foreach ($errors AS $error) {
+        foreach ($errors as $error) {
             $messages[$error->getErrorCode()] = $error->getErrorText();
         }
 
@@ -103,7 +103,7 @@ class AuthCaptureResponse extends AbstractResponse
     {
         $messages = [];
 
-        foreach ($messageType->getMessage() AS $message) {
+        foreach ($messageType->getMessage() as $message) {
             $messages[$message->getCode()] = $message->getText();
         }
 
