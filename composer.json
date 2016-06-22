@@ -22,8 +22,8 @@
     "require": {
         "wikimedia/composer-merge-plugin": "^1.3",
         "php": "^5.5 || ^7.0",
-        "authorizenet/authorizenet": "1.8.8",
-        "jms/serializer": "xsd2php-dev as 0.18.0",
+        "authorizenet/authorizenet": "1.8.9",
+        "jms/serializer": "serializer-master-dev as 1.0",
         "zendframework/zend-console": "^2.5",
         "zendframework/zend-di": "^2.5",
         "zendframework/zend-i18n": "^2.5",
@@ -38,8 +38,6 @@
         "zendframework/zend-view": "^2.5"
     },
     "require-dev": {
-        "goetas/xsd2php": "2.0.x-dev#fdc2ab0bb3f2b3ab796ca567cf8c0f3446a7ea3a",
-        "goetas/xsd-reader": "2.*@dev",
         "phpunit/phpunit": "^5.3",
         "squizlabs/php_codesniffer": "^2.6",
         "zendframework/zend-debug": "^2.5"
