@@ -10,11 +10,11 @@ class AuthenticationFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('Config');
+        $config = $serviceLocator->get('config');
 
         if (!array_key_exists('soliant_payment_authnet', $config)
-            && array_key_exists('login', $config['soliant_payment_authnet'])
-            && array_key_exists('key', $config['soliant_payment_authnet'])
+            || !array_key_exists('login', $config['soliant_payment_authnet'])
+            || !array_key_exists('key', $config['soliant_payment_authnet'])
         ) {
             throw new OutOfBoundsException('AuthnetPayment authentication key not configured.');
         }
