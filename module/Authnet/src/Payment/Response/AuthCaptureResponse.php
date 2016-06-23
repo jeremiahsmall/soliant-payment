@@ -80,31 +80,35 @@ class AuthCaptureResponse extends AbstractResponse
     }
 
     /**
-     * @param array $errors
+     * @param array|null $errors
      * @return array
      */
-    private function transactionResponseErrorsToArray(array $errors)
+    private function transactionResponseErrorsToArray(array $errors = null)
     {
         $messages = [];
 
-        /** @var ErrorAType $error */
-        foreach ($errors as $error) {
-            $messages[$error->getErrorCode()] = $error->getErrorText();
+        if (null !== $errors) {
+            /** @var ErrorAType $error */
+            foreach ($errors as $error) {
+                $messages[$error->getErrorCode()] = $error->getErrorText();
+            }
         }
 
         return $messages;
     }
 
     /**
-     * @param MessagesType $messageType
+     * @param MessagesType|null $messageType
      * @return array
      */
-    private function createTransactionErrorToArray(MessagesType $messageType)
+    private function createTransactionErrorToArray(MessagesType $messageType = null)
     {
         $messages = [];
 
-        foreach ($messageType->getMessage() as $message) {
-            $messages[$message->getCode()] = $message->getText();
+        if (null !== $messageType) {
+            foreach ($messageType->getMessage() as $message) {
+                $messages[$message->getCode()] = $message->getText();
+            }
         }
 
         return $messages;
