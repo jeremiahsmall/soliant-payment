@@ -33,10 +33,6 @@ class AuthCaptureResponse extends AbstractResponse
 
     public function isSuccess()
     {
-        if (null === $this->createTransactionResponse) {
-            return false;
-        }
-
         $transactionResponse = $this->createTransactionResponse->getTransactionResponse();
         $resultCode = $this->createTransactionResponse->getMessages()->getResultCode();
 
