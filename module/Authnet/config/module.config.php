@@ -5,7 +5,7 @@ return [
             'authorizeAndCapture' => Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService::class,
         ],
         'factories' => [
-            Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthenticationFactory::class =>
+            net\authorize\api\contract\v1\MerchantAuthenticationType::class =>
                 Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthenticationFactory::class,
             Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService::class =>
                 Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory::class,
