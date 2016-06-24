@@ -1,6 +1,5 @@
 <?php
-
-namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
+namespace Soliant\Payment\AuthentTest\Payment\Response;
 
 use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\MessagesType;

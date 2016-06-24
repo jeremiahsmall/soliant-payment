@@ -11,7 +11,7 @@ class AuthCaptureResponse extends AbstractResponse
     /**
      * @var CreateTransactionResponse
      */
-    protected $createTransactionResponse;
+    public $createTransactionResponse;
 
     /**
      * @var array
