@@ -1,6 +1,5 @@
 <?php
-
-namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
+namespace Soliant\Payment\AuthentTest;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Module;

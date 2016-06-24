@@ -1,5 +1,4 @@
 <?php
-
 namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
 
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
