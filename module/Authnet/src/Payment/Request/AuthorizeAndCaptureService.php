@@ -8,7 +8,6 @@ use net\authorize\api\contract\v1\MerchantAuthenticationType;
 use net\authorize\api\contract\v1\PaymentType;
 use net\authorize\api\contract\v1\TransactionRequestType;
 use net\authorize\api\controller\CreateTransactionController;
-use net\authorize\util\HttpClient;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
 use Soliant\Payment\Base\Payment\AbstractRequestService;
 
@@ -59,11 +58,10 @@ class AuthorizeAndCaptureService extends AbstractRequestService
 
     /**
      * @param array $data
-     * @param HttpClient $httpClient
      * @return AuthCaptureResponse
      * @throws Exception
      */
-    public function sendRequest(array $data, HttpClient $httpClient = null)
+    public function sendRequest(array $data)
     {
         if (!$this->isValid($data)) {
             throw new DomainException(sprintf(
@@ -102,11 +100,6 @@ class AuthorizeAndCaptureService extends AbstractRequestService
         $request->setTransactionRequest($transactionRequestType);
 
         $controller = new CreateTransactionController($request);
-
-        if (null !== $httpClient) {
-            $controller->httpClient = $httpClient;
-        }
-
         $response = $controller->executeWithApiResponse($this->transactionMode->getTransactionMode());
 
         $this->authCaptureResponse = new AuthCaptureResponse($response);
