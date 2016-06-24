@@ -101,6 +101,31 @@ class TransactionModeFactoryTest extends TestCase
          */
     }
 
+    public function testGetResponse()
+    {
+        $fieldMapConfig = $this->getFieldMapConfig();
+        $transactionMode = $this->getTransactionMode();
+        $merchantAuthentication = $this->getMerchantAuthentication();
+        $authorizeAndCaptureService = new AuthorizeAndCaptureService(
+            $merchantAuthentication,
+            $transactionMode,
+            $this->getFieldMapConfig()
+        );
+        $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
+        $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
+        $this->assertAttributeSame($merchantAuthentication, 'merchantAuthentication', $authorizeAndCaptureService);
+        $authorizeAndCaptureService->sendRequest(
+            [
+                'paymentType' => 'creditCard',
+                'amount' => '5.00',
+                'expirationDate' => '2017-01',
+                'cardNumber' => '4111111111111111'
+            ]
+        );
+        $response = $authorizeAndCaptureService->getResponse();
+        $this->assertInstanceOf(AuthCaptureResponse::class, $response);
+    }
+
     /**
      * @param string $mode
      * @return TransactionMode
