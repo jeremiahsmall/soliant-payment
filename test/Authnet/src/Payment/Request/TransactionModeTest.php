@@ -1,5 +1,4 @@
 <?php
-
 namespace Soliant\Payment\AuthentTest\Payment\Request;
 
 use net\authorize\api\constants\ANetEnvironment;

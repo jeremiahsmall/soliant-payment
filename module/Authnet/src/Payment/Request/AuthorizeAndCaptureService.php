@@ -1,7 +1,7 @@
 <?php
 namespace Soliant\Payment\Authnet\Payment\Request;
 
-use Exception;
+use DomainException;
 use net\authorize\api\contract\v1\CreateTransactionRequest;
 use net\authorize\api\contract\v1\CreditCardType;
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
@@ -64,7 +64,7 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     public function sendRequest(array $data)
     {
         if (!$this->isValid($data)) {
-            throw new Exception(sprintf(
+            throw new DomainException(sprintf(
                 'Invalid data configuration. sendRequest method must include the following keys: %s, %s, %s, %s',
                 self::FIELD_PAYMENT_TYPE,
                 self::FIELD_EXPIRATION_DATE,
@@ -80,7 +80,7 @@ class AuthorizeAndCaptureService extends AbstractRequestService
                 $creditCard->setExpirationDate($data[$this->fieldMap[self::FIELD_EXPIRATION_DATE]]);
                 break;
             default:
-                throw new Exception(sprintf(
+                throw new DomainException(sprintf(
                     'Invalid payment type specified.  Payment type must be one of the following: %s, %s',
                     self::PAYMENT_TYPE_CREDIT_CARD,
                     self::PAYMENT_TYPE_ECHECK
