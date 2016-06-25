@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/soliantconsulting/soliant-payment.svg?branch=master)](https://travis-ci.org/soliantconsulting/soliant-payment)
 [![Coverage Status](https://coveralls.io/repos/github/soliantconsulting/soliant-payment/badge.svg?branch=master)](https://coveralls.io/github/soliantconsulting/soliant-payment?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/soliantconsulting/soliant-payment/v/stable)](https://packagist.org/packages/soliantconsulting/soliant-payment)
+[![Latest Unstable Version](https://poser.pugx.org/soliantconsulting/soliant-payment/v/unstable)](https://packagist.org/packages/soliantconsulting/soliant-payment)
+[![Total Downloads](https://poser.pugx.org/soliantconsulting/soliant-payment/downloads)](https://packagist.org/packages/soliantconsulting/soliant-payment)
+[![License](https://poser.pugx.org/soliantconsulting/soliant-payment/license)](https://packagist.org/packages/soliantconsulting/soliant-payment)
 
 ## Quickstart
 
@@ -9,8 +13,20 @@
 
 Via composer
 
-```bash
-$ composer require soliantconsulting/soliant-payment
+```
+{
+    "require": {
+        "soliantconsulting/soliant-payment": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/goetas/serializer.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
 ```
 
 ### Usage
@@ -20,7 +36,7 @@ Add modules to project config/application.config.php.
 ```
 'modules' => [
     'Soliant\Payment\Base', // Required for all payment modules
-    'Soliant\Payment\[Payment Module]', // Where "Payment Module" is one of the following (Authnet)
+    'Soliant\Payment\[Payment Module]', // Where "Payment Module" is one of the following ("Authnet")
     'Soliant\Payment\Demo', // Access demo via /soliant-payment route
  ],
 ```
@@ -45,7 +61,7 @@ public function createService(ServiceLocatorInterface $serviceLocator)
 
 Each payment service should implement the following request structure.  Request data is passed via array to the 
 "sendRequest" method which returns a response object. (See the implemented payment modules payment.local.php.dist file 
-for data array structure and info on overriding data field names).  The response object can be tested for success with 
+for data array structure and info on overriding data field names. Ex. [a link](https://github.com/soliantconsulting/soliant-payment/blob/master/module/Authnet/config/authnet.payment.local.php.dist)).  The response object can be tested for success with 
 the "isSuccess" method which returns a boolean response.  
 
 If the request was successful, any data returned from the requested service should be access via the "getData" method.  
