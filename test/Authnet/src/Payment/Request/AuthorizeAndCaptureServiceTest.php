@@ -7,6 +7,7 @@ use net\authorize\api\constants\ANetEnvironment;
 use net\authorize\util\HttpClient;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
+use Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
@@ -25,7 +26,8 @@ class TransactionModeFactoryTest extends TestCase
         $authorizeAndCaptureService = new AuthorizeAndCaptureService(
             $merchantAuthentication,
             $transactionMode,
-            $this->getFieldMapConfig()
+            $this->getFieldMapConfig(),
+            $this->getCustomerAddressTypeHydrator()
         );
         $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
         $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
@@ -42,7 +44,8 @@ class TransactionModeFactoryTest extends TestCase
         $authorizeAndCaptureService = new AuthorizeAndCaptureService(
             $merchantAuthentication,
             $transactionMode,
-            $this->getFieldMapConfig()
+            $this->getFieldMapConfig(),
+            $this->getCustomerAddressTypeHydrator()
         );
         $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
         $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
@@ -64,7 +67,8 @@ class TransactionModeFactoryTest extends TestCase
         $authorizeAndCaptureService = new AuthorizeAndCaptureService(
             $merchantAuthentication,
             $transactionMode,
-            $this->getFieldMapConfig()
+            $this->getFieldMapConfig(),
+            $this->getCustomerAddressTypeHydrator()
         );
         $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
         $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
@@ -109,7 +113,8 @@ class TransactionModeFactoryTest extends TestCase
         $authorizeAndCaptureService = new AuthorizeAndCaptureService(
             $merchantAuthentication,
             $transactionMode,
-            $this->getFieldMapConfig()
+            $this->getFieldMapConfig(),
+            $this->getCustomerAddressTypeHydrator()
         );
         $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
         $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
@@ -136,6 +141,16 @@ class TransactionModeFactoryTest extends TestCase
         $transactionMode->getTransactionMode()->willReturn($mode);
 
         return $transactionMode->reveal();
+    }
+
+    /**
+     * @return CustomerAddressTypeHydrator
+     */
+    protected function getCustomerAddressTypeHydrator()
+    {
+        $customerAddressTypeHydrator = $this->prophesize(CustomerAddressTypeHydrator::class);
+
+        return $customerAddressTypeHydrator->reveal();
     }
 
     /**

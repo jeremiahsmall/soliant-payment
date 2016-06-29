@@ -13,6 +13,12 @@ return [
                 Soliant\Payment\Authnet\Payment\Request\Factory\TransactionModeFactory::class,
         ],
     ],
+    'hydrators' => [
+        'invokables' => [
+            Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator::class
+                => Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator::class,
+        ],
+    ],
     'soliant_payment_authnet' => [
         'service' => [
             'authorizationAndCapture' => [
@@ -21,6 +27,18 @@ return [
                     'cardNumber' => 'cardNumber',
                     'expirationDate' => 'expirationDate',
                     'amount' => 'amount',
+                    'billTo' => [
+                        'firstName' => 'firstName',
+                        'lastName' => 'lastName',
+                        'company' => 'company',
+                        'address' => 'address',
+                        'city' => 'city',
+                        'state' => 'state',
+                        'zip' => 'zip',
+                        'country' => 'country',
+                        'phoneNumber' => 'phoneNumber',
+                        'faxNumber' => 'faxNumber',
+                    ],
                 ],
             ],
         ],
