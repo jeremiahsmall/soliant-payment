@@ -3,6 +3,7 @@ namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
 
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
 use PHPUnit_Framework_TestCase as TestCase;
+use Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator;
 use Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
@@ -25,11 +26,13 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
         $config = $this->getConfig();
         $merchantAuthenticationType = $this->prophesize(MerchantAuthenticationType::class)->reveal();
         $transactionMode = $this->prophesize(TransactionMode::class)->reveal();
+        $customerAddressTypeHydrator = $this->prophesize(CustomerAddressTypeHydrator::class)->reveal();
         $factory = new AuthorizeAndCaptureServiceFactory();
         $instance = $factory->createService($this->getContainer(
             $config,
             $merchantAuthenticationType,
-            $transactionMode
+            $transactionMode,
+            $customerAddressTypeHydrator
         ));
         $this->assertInstanceOf(AuthorizeAndCaptureService::class, $instance);
         $this->assertAttributeSame($merchantAuthenticationType, 'merchantAuthentication', $instance);
@@ -45,17 +48,24 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
      * @param array $config
      * @param MerchantAuthenticationType $merchantAuthenticationType
      * @param TransactionMode $transactionMode
+     * @param CustomerAddressTypeHydrator $customerAddressTypeHydrator
      * @return ServiceLocatorInterface
      */
     protected function getContainer(
         array $config,
         MerchantAuthenticationType $merchantAuthenticationType = null,
-        TransactionMode $transactionMode = null
+        TransactionMode $transactionMode = null,
+        CustomerAddressTypeHydrator $customerAddressTypeHydrator = null
     ) {
+        $hydratorManager = $this->prophesize(ServiceLocatorInterface::class);
+        $hydratorManager->get(CustomerAddressTypeHydrator::class)->willReturn($customerAddressTypeHydrator);
+        $hydratorManager->reveal();
+
         $container = $this->prophesize(ServiceLocatorInterface::class);
         $container->get('config')->willReturn($config);
         $container->get(MerchantAuthenticationType::class)->willReturn($merchantAuthenticationType);
         $container->get(TransactionMode::class)->willReturn($transactionMode);
+        $container->get('HydratorManager')->willReturn($hydratorManager);
 
         return $container->reveal();
     }

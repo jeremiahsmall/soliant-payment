@@ -30,7 +30,19 @@ class AuthorizeAndCaptureController extends AbstractActionController
                 'paymentType' => 'creditCard',
                 'amount' => '5.00',
                 'expirationDate' => '2017-01',
-                'cardNumber' => '4111111111111111'
+                'cardNumber' => '4111111111111111',
+                'billTo' => [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'company' => 'Soliant Consulting',
+                    'address' => '14 N Peoria St.',
+                    'city' => 'Chicago',
+                    'state' => 'IL',
+                    'zip' => '60607',
+                    'country' => 'US',
+                    'phoneNumber' => '5555555555',
+                    'faxNumber' => '5555555555',
+                ],
             ]);
 
             if ($response->isSuccess()) {
