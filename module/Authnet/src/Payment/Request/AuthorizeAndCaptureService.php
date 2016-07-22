@@ -4,10 +4,13 @@ namespace Soliant\Payment\Authnet\Payment\Request;
 use DomainException;
 use net\authorize\api\contract\v1\CreateTransactionRequest;
 use net\authorize\api\contract\v1\CreditCardType;
+use net\authorize\api\contract\v1\CustomerAddressType;
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
+use net\authorize\api\contract\v1\NameAndAddressType;
 use net\authorize\api\contract\v1\PaymentType;
 use net\authorize\api\contract\v1\TransactionRequestType;
 use net\authorize\api\controller\CreateTransactionController;
+use Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
 use Soliant\Payment\Base\Payment\AbstractRequestService;
 
@@ -17,9 +20,22 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     const FIELD_EXPIRATION_DATE = 'expirationDate';
     const FIELD_CARD_NUMBER = 'cardNumber';
     const FIELD_PAYMENT_TYPE = 'paymentType';
+    const FIELD_BILL_TO_FIRST_NAME = 'firstName';
+    const FIELD_BILL_TO_LAST_NAME = 'lastName';
+    const FIELD_BILL_TO_COMPANY = 'company';
+    const FIELD_BILL_TO_ADDRESS = 'address';
+    const FIELD_BILL_TO_CITY = 'city';
+    const FIELD_BILL_TO_STATE = 'state';
+    const FIELD_BILL_TO_ZIP = 'zip';
+    const FIELD_BILL_TO_COUNTRY = 'country';
+    const FIELD_BILL_TO_PHONE_NUMBER = 'phoneNumber';
+    const FIELD_BILL_TO_FAX_NUMBER = 'faxNumber';
+
     const PAYMENT_TYPE_CREDIT_CARD = 'creditCard';
     const PAYMENT_TYPE_ECHECK = 'eCheck';
     const PAYMENT_TRANSACTION_TYPE = 'authCaptureTransaction';
+
+    const BILL_TO_ADDRESS = 'billTo';
 
     /**
      * @var MerchantAuthenticationType
@@ -42,18 +58,26 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     protected $fieldMap;
 
     /**
+     * @var CustomerAddressTypeHydrator
+     */
+    protected $customerAddressTypeHydrator;
+
+    /**
      * @param MerchantAuthenticationType $merchantAuthentication
      * @param TransactionMode $transactionMode
      * @param array $fieldMap
+     * @param CustomerAddressTypeHydrator $customerAddressTypeHydrator
      */
     public function __construct(
         MerchantAuthenticationType $merchantAuthentication,
         TransactionMode $transactionMode,
-        array $fieldMap
+        array $fieldMap,
+        CustomerAddressTypeHydrator $customerAddressTypeHydrator
     ) {
         $this->merchantAuthentication = $merchantAuthentication;
         $this->transactionMode = $transactionMode;
         $this->fieldMap = $fieldMap;
+        $this->customerAddressTypeHydrator = $customerAddressTypeHydrator;
     }
 
     /**
@@ -94,6 +118,17 @@ class AuthorizeAndCaptureService extends AbstractRequestService
         $transactionRequestType->setTransactionType(self::PAYMENT_TRANSACTION_TYPE);
         $transactionRequestType->setAmount($data[$this->fieldMap[self::FIELD_AMOUNT]]);
         $transactionRequestType->setPayment($paymentOne);
+
+        if (array_key_exists(self::BILL_TO_ADDRESS, $data) && is_array($data[self::BILL_TO_ADDRESS])) {
+            $billToAddress = new CustomerAddressType();
+            $billToAddress = $this->customerAddressTypeHydrator->hydrate(
+                $data[self::BILL_TO_ADDRESS],
+                $billToAddress,
+                $this->fieldMap[self::BILL_TO_ADDRESS]
+            );
+
+            $transactionRequestType->setBillTo($billToAddress);
+        }
 
         $request = new CreateTransactionRequest();
         $request->setMerchantAuthentication($this->merchantAuthentication);
