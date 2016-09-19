@@ -24,6 +24,7 @@ return [
                         'country' => 'country',
                         'phoneNumber' => 'phoneNumber',
                         'faxNumber' => 'faxNumber',
+                        'email' => 'email',
                     ],
                 ],
             ],

@@ -1,46 +1,21 @@
 <?php
 namespace Soliant\Payment\Authnet\Payment\Request;
 
-use DomainException;
 use net\authorize\api\contract\v1\CreateTransactionRequest;
-use net\authorize\api\contract\v1\CreditCardType;
-use net\authorize\api\contract\v1\CustomerAddressType;
-use net\authorize\api\contract\v1\MerchantAuthenticationType;
-use net\authorize\api\contract\v1\NameAndAddressType;
-use net\authorize\api\contract\v1\PaymentType;
 use net\authorize\api\contract\v1\TransactionRequestType;
 use net\authorize\api\controller\CreateTransactionController;
-use Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
 use Soliant\Payment\Base\Payment\AbstractRequestService;
+use Zend\Hydrator\ClassMethods;
 
 class AuthorizeAndCaptureService extends AbstractRequestService
 {
-    const FIELD_AMOUNT = 'amount';
-    const FIELD_EXPIRATION_DATE = 'expirationDate';
-    const FIELD_CARD_NUMBER = 'cardNumber';
-    const FIELD_PAYMENT_TYPE = 'paymentType';
-    const FIELD_BILL_TO_FIRST_NAME = 'firstName';
-    const FIELD_BILL_TO_LAST_NAME = 'lastName';
-    const FIELD_BILL_TO_COMPANY = 'company';
-    const FIELD_BILL_TO_ADDRESS = 'address';
-    const FIELD_BILL_TO_CITY = 'city';
-    const FIELD_BILL_TO_STATE = 'state';
-    const FIELD_BILL_TO_ZIP = 'zip';
-    const FIELD_BILL_TO_COUNTRY = 'country';
-    const FIELD_BILL_TO_PHONE_NUMBER = 'phoneNumber';
-    const FIELD_BILL_TO_FAX_NUMBER = 'faxNumber';
-
-    const PAYMENT_TYPE_CREDIT_CARD = 'creditCard';
-    const PAYMENT_TYPE_ECHECK = 'eCheck';
     const PAYMENT_TRANSACTION_TYPE = 'authCaptureTransaction';
 
-    const BILL_TO_ADDRESS = 'billTo';
-
     /**
-     * @var MerchantAuthenticationType
+     * @var CreateTransactionRequest
      */
-    protected $merchantAuthentication;
+    protected $createTransactionRequest;
 
     /**
      * @var TransactionMode
@@ -58,26 +33,42 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     protected $fieldMap;
 
     /**
-     * @var CustomerAddressTypeHydrator
+     * @var ClassMethods
      */
-    protected $customerAddressTypeHydrator;
+    protected $hydrator;
 
     /**
-     * @param MerchantAuthenticationType $merchantAuthentication
+     * @var TransactionRequestType
+     */
+    protected $transactionRequestType;
+
+    /**
+     * @var SubsetsService
+     */
+    protected $subsetsService;
+
+    /**
+     * @param CreateTransactionRequest $createTransactionRequest
      * @param TransactionMode $transactionMode
      * @param array $fieldMap
-     * @param CustomerAddressTypeHydrator $customerAddressTypeHydrator
+     * @param ClassMethods $hydrator
+     * @param TransactionRequestType $transactionRequestType
+     * @param SubsetsService $subsetsService
      */
     public function __construct(
-        MerchantAuthenticationType $merchantAuthentication,
+        CreateTransactionRequest $createTransactionRequest,
         TransactionMode $transactionMode,
         array $fieldMap,
-        CustomerAddressTypeHydrator $customerAddressTypeHydrator
+        ClassMethods $hydrator,
+        TransactionRequestType $transactionRequestType,
+        SubsetsService $subsetsService
     ) {
-        $this->merchantAuthentication = $merchantAuthentication;
+        $this->createTransactionRequest = $createTransactionRequest;
         $this->transactionMode = $transactionMode;
         $this->fieldMap = $fieldMap;
-        $this->customerAddressTypeHydrator = $customerAddressTypeHydrator;
+        $this->hydrator = $hydrator;
+        $this->transactionRequestType = $transactionRequestType;
+        $this->subsetsService = $subsetsService;
     }
 
     /**
@@ -87,54 +78,43 @@ class AuthorizeAndCaptureService extends AbstractRequestService
      */
     public function sendRequest(array $data)
     {
-        if (!$this->isValid($data)) {
-            throw new DomainException(sprintf(
-                'Invalid data configuration. sendRequest method must include the following keys: %s, %s, %s, %s',
-                self::FIELD_PAYMENT_TYPE,
-                self::FIELD_EXPIRATION_DATE,
-                self::FIELD_AMOUNT,
-                self::FIELD_CARD_NUMBER
-            ));
+        /**
+         * Set base transaction type data
+         */
+        $this->transactionRequestType->setTransactionType(self::PAYMENT_TRANSACTION_TYPE);
+        $this->hydrator->hydrate(
+            $this->applyFieldMap($data, $this->fieldMap, array_keys($this->fieldMap)),
+            $this->transactionRequestType
+        );
+
+        /**
+         * Add subsets
+         */
+        foreach ($this->subsetsService->getSubsetsForTransactionType(self::PAYMENT_TRANSACTION_TYPE) as $subsetKey) {
+
+            if (array_key_exists($subsetKey, $data) && is_array($data[$subsetKey])) {
+                
+                if ($this->subsetsService->isSubsetCollection($subsetKey)) {
+
+                    foreach ($data[$subsetKey] as $subsetData) {
+                        $this->addSubsetForKey($subsetKey, $subsetData);
+                    }
+                } elseif ($this->subsetsService->subsetHasParent($subsetKey)) {
+
+                    $this->addSubsetForKey(
+                        $subsetKey,
+                        $data[$subsetKey],
+                        $this->subsetsService->getSubsetParent($subsetKey)
+                    );
+                } else {
+                    $this->addSubsetForKey($subsetKey, $data[$subsetKey]);
+                }
+            }
         }
 
-        switch ($data[$this->fieldMap[self::FIELD_PAYMENT_TYPE]]) {
-            case self::PAYMENT_TYPE_CREDIT_CARD:
-                $creditCard = new CreditCardType();
-                $creditCard->setCardNumber($data[$this->fieldMap[self::FIELD_CARD_NUMBER]]);
-                $creditCard->setExpirationDate($data[$this->fieldMap[self::FIELD_EXPIRATION_DATE]]);
-                break;
-            default:
-                throw new DomainException(sprintf(
-                    'Invalid payment type specified.  Payment type must be one of the following: %s, %s',
-                    self::PAYMENT_TYPE_CREDIT_CARD,
-                    self::PAYMENT_TYPE_ECHECK
-                ));
-        }
+        $this->createTransactionRequest->setTransactionRequest($this->transactionRequestType);
 
-        $paymentOne = new PaymentType();
-        $paymentOne->setCreditCard($creditCard);
-
-        $transactionRequestType = new TransactionRequestType();
-        $transactionRequestType->setTransactionType(self::PAYMENT_TRANSACTION_TYPE);
-        $transactionRequestType->setAmount($data[$this->fieldMap[self::FIELD_AMOUNT]]);
-        $transactionRequestType->setPayment($paymentOne);
-
-        if (array_key_exists(self::BILL_TO_ADDRESS, $data) && is_array($data[self::BILL_TO_ADDRESS])) {
-            $billToAddress = new CustomerAddressType();
-            $billToAddress = $this->customerAddressTypeHydrator->hydrate(
-                $data[self::BILL_TO_ADDRESS],
-                $billToAddress,
-                $this->fieldMap[self::BILL_TO_ADDRESS]
-            );
-
-            $transactionRequestType->setBillTo($billToAddress);
-        }
-
-        $request = new CreateTransactionRequest();
-        $request->setMerchantAuthentication($this->merchantAuthentication);
-        $request->setTransactionRequest($transactionRequestType);
-
-        $controller = new CreateTransactionController($request);
+        $controller = new CreateTransactionController($this->createTransactionRequest);
         $response = $controller->executeWithApiResponse($this->transactionMode->getTransactionMode());
 
         $this->authCaptureResponse = new AuthCaptureResponse($response);
@@ -151,23 +131,46 @@ class AuthorizeAndCaptureService extends AbstractRequestService
 
     /**
      * @param array $data
-     * @return bool
+     * @param array $map
+     * @param array $available
+     * @return array $mapped
      */
-    private function isValid(array $data)
+    private function applyFieldMap(array $data, array $map, array $available)
     {
-        $requiredField = [
-            self::FIELD_AMOUNT,
-            self::FIELD_CARD_NUMBER,
-            self::FIELD_EXPIRATION_DATE,
-            self::FIELD_PAYMENT_TYPE
-        ];
-
-        foreach ($requiredField as $key) {
-            if (!array_key_exists($key, $data)) {
-                return false;
+        $mapped = null;
+        
+        foreach ($available as $field) {
+            if (!is_array($map[$field]) && isset($data[$map[$field]])) {
+                $mapped[$field] = $data[$map[$field]];
             }
         }
 
-        return true;
+        return $mapped;
+    }
+
+    /**
+     * @param string $subsetKey
+     * @param array $data
+     * @param mixed $subsetParent
+     */
+    private function addSubsetForKey($subsetKey, array $data, $subsetParent = null)
+    {
+        $subset = $this->subsetsService->getSubsetForKey($subsetKey);
+
+        $this->hydrator->hydrate(
+            $this->applyFieldMap(
+                $data,
+                $this->fieldMap[$subsetKey],
+                array_keys($this->fieldMap[$subsetKey])
+            ),
+            $subset
+        );
+
+        $this->subsetsService->setSubsetForKey(
+            $subsetKey,
+            $this->transactionRequestType,
+            $subset,
+            null === $subsetParent ? null : $subsetParent
+        );
     }
 }

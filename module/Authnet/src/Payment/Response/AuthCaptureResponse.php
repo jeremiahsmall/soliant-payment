@@ -8,6 +8,9 @@ use Soliant\Payment\Base\Payment\Response\AbstractResponse;
 
 class AuthCaptureResponse extends AbstractResponse
 {
+    const TRANSACTION_RESPONSE = 'transactionResponse';
+    const PROFILE_RESPONSE = 'profileResponse';
+
     /**
      * @var CreateTransactionResponse
      */
@@ -31,30 +34,73 @@ class AuthCaptureResponse extends AbstractResponse
         $this->createTransactionResponse = $createTransactionResponse;
     }
 
+    /**
+     * @return bool
+     */
     public function isSuccess()
     {
         $transactionResponse = $this->createTransactionResponse->getTransactionResponse();
         $resultCode = $this->createTransactionResponse->getMessages()->getResultCode();
 
         if ($resultCode === 'Error' && null === $transactionResponse) {
-            $this->messages = $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages());
+            $this->messages = [
+                self::TRANSACTION_RESPONSE =>
+                    $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+            ];
             return false;
         }
 
         if ($transactionResponse->getResponseCode() !== "1") {
-            $this->messages = array_merge(
-                $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
-                $this->transactionResponseErrorsToArray($transactionResponse->getErrors())
-            );
+            $this->messages = [
+                self::TRANSACTION_RESPONSE => array_merge(
+                    $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+                    $this->transactionResponseErrorsToArray($transactionResponse->getErrors())
+                ),
+            ];
             return false;
         }
 
-        $this->messages = $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages());
+        $this->messages = [
+            self::TRANSACTION_RESPONSE =>
+                $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+        ];
 
         $this->data = [
-            'authorizationCode' => $transactionResponse->getAuthCode(),
-            'transactionId' => $transactionResponse->getTransId(),
+            self::TRANSACTION_RESPONSE => [
+                'responseCode' => $transactionResponse->getResponseCode(),
+                'authCode' => $transactionResponse->getAuthCode(),
+                'avsResultCode' => $transactionResponse->getAvsResultCode(),
+                'ccvResultCode' => $transactionResponse->getCvvResultCode(),
+                'cavvResultCode' => $transactionResponse->getCavvResultCode(),
+                'transId' => $transactionResponse->getTransId(),
+                'refTransID' => $transactionResponse->getRefTransID(),
+                'transHash' => $transactionResponse->getTransHash(),
+                'accountNumber' => $transactionResponse->getAccountNumber(),
+                'accountType' => $transactionResponse->getAccountType(),
+            ],
         ];
+
+        $profileResponse = $this->createTransactionResponse->getProfileResponse();
+
+        if (null !== $profileResponse) {
+
+            $this->messages = array_merge(
+                $this->messages,
+                [self::PROFILE_RESPONSE => $this->createTransactionErrorToArray($profileResponse->getMessages()),]
+            );
+
+            $this->data = array_merge(
+                $this->data,
+                [
+                    'profileResponse' => [
+                        'resultCode' => $profileResponse->getMessages()->getResultCode(),
+                        'customerProfileId' => $profileResponse->getCustomerProfileId(),
+                        'customerPaymentProfileIdList' => $profileResponse->getCustomerPaymentProfileIdList(),
+                        'customerShippingAddressIdList' => $profileResponse->getCustomerShippingAddressIdList(),
+                    ],
+                ]
+            );
+        }
 
         return true;
     }
