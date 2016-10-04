@@ -2,6 +2,7 @@
 namespace Soliant\Payment\Authnet\Payment\Request;
 
 use net\authorize\api\contract\v1\BankAccountType;
+use net\authorize\api\contract\v1\CcAuthenticationType;
 use net\authorize\api\contract\v1\CreditCardTrackType;
 use net\authorize\api\contract\v1\CreditCardType;
 use net\authorize\api\contract\v1\CustomerAddressType;
@@ -12,8 +13,11 @@ use net\authorize\api\contract\v1\LineItemType;
 use net\authorize\api\contract\v1\NameAndAddressType;
 use net\authorize\api\contract\v1\OrderType;
 use net\authorize\api\contract\v1\PaymentType;
+use net\authorize\api\contract\v1\SettingType;
 use net\authorize\api\contract\v1\SolutionType;
 use net\authorize\api\contract\v1\TransactionRequestType;
+use net\authorize\api\contract\v1\TransRetailInfoType;
+use net\authorize\api\contract\v1\UserFieldType;
 
 class SubsetsService
 {
@@ -30,6 +34,10 @@ class SubsetsService
     const PROFILE_SUBSET = 'profile';
     const CUSTOMER_SUBSET = 'customer';
     const SOLUTION_SUBSET = 'solution';
+    const CARDHOLDER_AUTHENTICATION_SUBSET = 'cardholderAuthentication';
+    const RETAIL_SUBSET = 'retail';
+    const TRANSACTION_SETTINGS_SUBSET = 'transactionSettings';
+    const USER_FIELDS_SUBSET = 'userFields';
 
     /**
      * @var mixed
@@ -54,6 +62,10 @@ class SubsetsService
             self::PROFILE_SUBSET,
             self::CUSTOMER_SUBSET,
             self::SOLUTION_SUBSET,
+            self::CARDHOLDER_AUTHENTICATION_SUBSET,
+            self::RETAIL_SUBSET,
+            self::TRANSACTION_SETTINGS_SUBSET,
+            self::USER_FIELDS_SUBSET,
         ],
     ];
 
@@ -99,6 +111,18 @@ class SubsetsService
             case self::SOLUTION_SUBSET:
                 return new SolutionType();
                 break;
+            case self::CARDHOLDER_AUTHENTICATION_SUBSET:
+                return new CcAuthenticationType();
+                break;
+            case self::RETAIL_SUBSET:
+                return new TransRetailInfoType();
+                break;
+            case self::TRANSACTION_SETTINGS_SUBSET:
+                return new SettingType();
+                break;
+            case self::USER_FIELDS_SUBSET:
+                return new UserFieldType();
+                break;
         }
     }
 
@@ -115,7 +139,7 @@ class SubsetsService
         $subsetParent = false
     ) {
         switch ($subsetKey) {
-            case self::BILL_TO_SUBSET;
+            case self::BILL_TO_SUBSET:
                 $transactionRequestType->setBillTo($subset);
                 break;
             case self::SHIP_TO_SUBSET:
@@ -157,6 +181,18 @@ class SubsetsService
             case self::SOLUTION_SUBSET:
                 $transactionRequestType->setSolution($subset);
                 break;
+            case self::CARDHOLDER_AUTHENTICATION_SUBSET:
+                $transactionRequestType->setCardholderAuthentication($subset);
+                break;
+            case self::RETAIL_SUBSET:
+                $transactionRequestType->setRetail($subset);
+                break;
+            case self::TRANSACTION_SETTINGS_SUBSET:
+                $transactionRequestType->addToTransactionSettings($subset);
+                break;
+            case self::USER_FIELDS_SUBSET:
+                $transactionRequestType->addToUserFields($subset);
+                break;
         }
     }
 
@@ -187,7 +223,6 @@ class SubsetsService
             case self::BANK_ACCOUNT_SUBSET:
             case self::CREDIT_CARD_SUBSET:
             case self::TRACK_DATA_SUBSET:
-
                 if (null === $this->subsetParent) {
                     $this->subsetParent = new PaymentType();
                 }
@@ -219,6 +254,8 @@ class SubsetsService
     {
         switch ($subsetKey) {
             case self::LINE_ITEMS_SUBSET:
+            case self::TRANSACTION_SETTINGS_SUBSET:
+            case self::USER_FIELDS_SUBSET:
                 return true;
                 break;
             default:

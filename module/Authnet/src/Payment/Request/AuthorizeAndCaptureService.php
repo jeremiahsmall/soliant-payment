@@ -74,33 +74,22 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     /**
      * @param array $data
      * @return AuthCaptureResponse
-     * @throws Exception
      */
     public function sendRequest(array $data)
     {
-        /**
-         * Set base transaction type data
-         */
         $this->transactionRequestType->setTransactionType(self::PAYMENT_TRANSACTION_TYPE);
         $this->hydrator->hydrate(
             $this->applyFieldMap($data, $this->fieldMap, array_keys($this->fieldMap)),
             $this->transactionRequestType
         );
 
-        /**
-         * Add subsets
-         */
         foreach ($this->subsetsService->getSubsetsForTransactionType(self::PAYMENT_TRANSACTION_TYPE) as $subsetKey) {
-
             if (array_key_exists($subsetKey, $data) && is_array($data[$subsetKey])) {
-                
                 if ($this->subsetsService->isSubsetCollection($subsetKey)) {
-
                     foreach ($data[$subsetKey] as $subsetData) {
                         $this->addSubsetForKey($subsetKey, $subsetData);
                     }
                 } elseif ($this->subsetsService->subsetHasParent($subsetKey)) {
-
                     $this->addSubsetForKey(
                         $subsetKey,
                         $data[$subsetKey],
@@ -138,13 +127,11 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     private function applyFieldMap(array $data, array $map, array $available)
     {
         $mapped = null;
-        
         foreach ($available as $field) {
             if (!is_array($map[$field]) && isset($data[$map[$field]])) {
                 $mapped[$field] = $data[$map[$field]];
             }
         }
-
         return $mapped;
     }
 

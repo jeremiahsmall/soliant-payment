@@ -3,7 +3,9 @@ namespace Soliant\Payment\Authnet\Payment\Response;
 
 use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\MessagesType;
+use net\authorize\api\contract\v1\TransactionResponseType;
 use net\authorize\api\contract\v1\TransactionResponseType\ErrorsAType\ErrorAType;
+use net\authorize\api\contract\v1\UserFieldType;
 use Soliant\Payment\Base\Payment\Response\AbstractResponse;
 
 class AuthCaptureResponse extends AbstractResponse
@@ -77,13 +79,13 @@ class AuthCaptureResponse extends AbstractResponse
                 'transHash' => $transactionResponse->getTransHash(),
                 'accountNumber' => $transactionResponse->getAccountNumber(),
                 'accountType' => $transactionResponse->getAccountType(),
+                'userFields' => $this->getUserFieldsFromTransactionResponse($transactionResponse),
             ],
         ];
 
         $profileResponse = $this->createTransactionResponse->getProfileResponse();
 
         if (null !== $profileResponse) {
-
             $this->messages = array_merge(
                 $this->messages,
                 [self::PROFILE_RESPONSE => $this->createTransactionErrorToArray($profileResponse->getMessages()),]
@@ -154,5 +156,23 @@ class AuthCaptureResponse extends AbstractResponse
         }
 
         return $messages;
+    }
+
+    /**
+     * @param TransactionResponseType $transactionResponseType
+     * @return array
+     */
+    private function getUserFieldsFromTransactionResponse(TransactionResponseType $transactionResponseType)
+    {
+        $userFields = null;
+        $responseUserFields = $transactionResponseType->getUserFields();
+        if (null !== $responseUserFields && is_array($responseUserFields)) {
+            /** @var UserFieldType $responseUserField */
+            foreach ($responseUserFields as $responseUserField) {
+                $userFields[] = ['name' => $responseUserField->getName(), 'value' => $responseUserField->getValue(),];
+            }
+        }
+
+        return $userFields;
     }
 }

@@ -109,6 +109,22 @@ return [
                     ],
                     'employeeId' => 'employeeId',
                     'customerIP' => 'customerIP',
+                    'cardholderAuthentication' => [
+                        'authenticationIndicator' => 'authenticationIndicator',
+                        'cardholderAuthenticationValue' => 'cardholderAuthenticationValue',
+                    ],
+                    'retail' => [
+                        'marketType' => 'marketType',
+                        'deviceType' => 'deviceType',
+                    ],
+                    'transactionSettings' => [
+                        'settingName' => 'settingName',
+                        'settingValue' => 'settingValue',
+                    ],
+                    'userFields' => [
+                        'name' => 'name',
+                        'value' => 'value',
+                    ],
                 ],
             ],
         ],
