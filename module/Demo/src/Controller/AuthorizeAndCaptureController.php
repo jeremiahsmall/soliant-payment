@@ -28,10 +28,10 @@ class AuthorizeAndCaptureController extends AbstractActionController
         //if ($this->getRequest()->isPost()) {
         $response = $this->authorizeAndCaptureService->sendRequest([
             'amount' => '5.00',
-            //'trackData' => [
-            //    'track1' => 'Track 1 Data',
-            //    'track2' => 'Track 2 Data',
-            //],
+            'trackData' => [
+                'track1' => 'Track 1 Data',
+                'track2' => 'Track 2 Data',
+            ],
             //'creditCard' => [
             //    'cardNumber' => '4111111111111111',
             //    'expirationDate' => '2017-01',

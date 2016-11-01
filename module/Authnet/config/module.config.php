@@ -14,16 +14,50 @@ return [
             net\authorize\api\contract\v1\CreateTransactionRequest::class =>
                 Soliant\Payment\Authnet\Payment\Request\Factory\CreateTransactionRequestFactory::class,
         ],
-        'invokables' => [
-            Soliant\Payment\Authnet\Payment\Request\CreditCardType::class =>
-                Soliant\Payment\Authnet\Payment\Request\CreditCardType::class,
-            Soliant\Payment\Authnet\Payment\Request\SubsetsService::class =>
-                Soliant\Payment\Authnet\Payment\Request\SubsetsService::class,
+    ],
+    'hydrators' => [
+        'factories' => [
+            Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator::class =>
+                Soliant\Payment\Authnet\Payment\Hydrator\Factory\TransactionRequestHydratorFactory::class,
         ],
     ],
     'soliant_payment_authnet' => [
+        'subset' => [
+            'billTo' => net\authorize\api\contract\v1\CustomerAddressType::class,
+            'shipTo' => net\authorize\api\contract\v1\NameAndAddressType::class,
+            'lineItems' => net\authorize\api\contract\v1\LineItemType::class,
+            'tax' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+            'duty' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+            'shipping' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+            'order' => net\authorize\api\contract\v1\OrderType::class,
+            'bankAccount' => net\authorize\api\contract\v1\BankAccountType::class,
+            'creditCard' => net\authorize\api\contract\v1\CreditCardType::class,
+            'trackData' => net\authorize\api\contract\v1\CreditCardTrackType::class,
+            'profile' => net\authorize\api\contract\v1\CustomerProfilePaymentType::class,
+            'customer' => net\authorize\api\contract\v1\CustomerDataType::class,
+            'solution' => net\authorize\api\contract\v1\SolutionType::class,
+            'cardholderAuthentication' => net\authorize\api\contract\v1\CcAuthenticationType::class,
+            'retail' => net\authorize\api\contract\v1\TransRetailInfoType::class,
+            'transactionSettings' => net\authorize\api\contract\v1\SettingType::class,
+            'userFields' => net\authorize\api\contract\v1\UserFieldType::class,
+        ],
+        'subset_collection' => [
+            'lineItems',
+            'userFields',
+            'transactionSettings',
+        ],
+        'subset_parent' => [
+            'bankAccount' =>  net\authorize\api\contract\v1\PaymentType::class,
+            'trackData' =>  net\authorize\api\contract\v1\PaymentType::class,
+            'creditCard' =>  net\authorize\api\contract\v1\PaymentType::class,
+        ],
+        'subset_alias' => [
+            'bankAccount' => 'payment',
+            'trackData' => 'payment',
+            'creditCard' => 'payment',
+        ],
         'service' => [
-            'authorizationAndCapture' => [
+            'authCaptureTransaction' => [
                 'field_map' => [
                     'amount' => 'amount',
                     'trackData' => [

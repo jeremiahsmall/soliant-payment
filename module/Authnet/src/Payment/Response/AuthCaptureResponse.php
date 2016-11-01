@@ -6,9 +6,9 @@ use net\authorize\api\contract\v1\MessagesType;
 use net\authorize\api\contract\v1\TransactionResponseType;
 use net\authorize\api\contract\v1\TransactionResponseType\ErrorsAType\ErrorAType;
 use net\authorize\api\contract\v1\UserFieldType;
-use Soliant\Payment\Base\Payment\Response\AbstractResponse;
+use Soliant\Payment\Base\Payment\Response\ResponseInterface;
 
-class AuthCaptureResponse extends AbstractResponse
+class AuthCaptureResponse implements ResponseInterface
 {
     const TRANSACTION_RESPONSE = 'transactionResponse';
     const PROFILE_RESPONSE = 'profileResponse';
