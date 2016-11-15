@@ -20,8 +20,7 @@ class AuthorizeAndCaptureService extends AbstractRequestService
     public function sendRequest(array $data)
     {
         $this->transactionRequestType->setTransactionType(self::PAYMENT_TRANSACTION_TYPE);
-        $this->hydrate($data); 
-
+        $this->hydrate($data);
         $controller = new CreateTransactionController($this->createTransactionRequest);
         $response = $controller->executeWithApiResponse($this->transactionMode->getTransactionMode());
 

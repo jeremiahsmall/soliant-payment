@@ -84,7 +84,6 @@ abstract class AbstractRequestService implements RequestServiceInterface
     protected function hydrate(array $data)
     {
         $this->transactionRequestHydrator->hydrate($data, $this->transactionRequestType);
-        
         $transactionRequestTypeData = [];
 
         /** Loop the configured subsets */

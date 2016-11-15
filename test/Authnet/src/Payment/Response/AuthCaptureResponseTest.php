@@ -8,7 +8,6 @@ use net\authorize\api\contract\v1\TransactionResponseType;
 use net\authorize\api\contract\v1\TransactionResponseType\ErrorsAType\ErrorAType;
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @covers Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse
@@ -45,7 +44,10 @@ class AuthCaptureReponseTest extends TestCase
         $authCaptureResponse = new AuthCaptureResponse($createTransactionResponse);
         $this->assertAttributeSame($createTransactionResponse, 'createTransactionResponse', $authCaptureResponse);
         $this->assertFalse($authCaptureResponse->isSuccess());
-        $this->assertContains('There was a message', $authCaptureResponse->getMessages());
+        $this->assertContains(
+            'There was a message',
+            $authCaptureResponse->getMessages()[AuthCaptureResponse::TRANSACTION_RESPONSE]
+        );
     }
 
     public function testResponseIsSuccessReturnsTrueAndGetMessages()
@@ -54,7 +56,10 @@ class AuthCaptureReponseTest extends TestCase
         $authCaptureResponse = new AuthCaptureResponse($createTransactionResponse);
         $this->assertAttributeSame($createTransactionResponse, 'createTransactionResponse', $authCaptureResponse);
         $this->assertTrue($authCaptureResponse->isSuccess());
-        $this->assertContains('There was a message', $authCaptureResponse->getMessages());
+        $this->assertContains(
+            'There was a message',
+            $authCaptureResponse->getMessages()[AuthCaptureResponse::TRANSACTION_RESPONSE]
+        );
     }
 
     public function testResponseGetData()
@@ -63,7 +68,7 @@ class AuthCaptureReponseTest extends TestCase
         $authCaptureResponse = new AuthCaptureResponse($createTransactionResponse);
         $this->assertAttributeSame($createTransactionResponse, 'createTransactionResponse', $authCaptureResponse);
         $this->assertTrue($authCaptureResponse->isSuccess());
-        $this->assertContains('Transaction Id', $authCaptureResponse->getData());
+        $this->assertContains('transId', $authCaptureResponse->getData()[AuthCaptureResponse::TRANSACTION_RESPONSE]);
     }
 
     /**
@@ -97,6 +102,14 @@ class AuthCaptureReponseTest extends TestCase
             );
             $transactionResponseType->getAuthCode()->willReturn($authCode);
             $transactionResponseType->getTransId()->willReturn($transactionId);
+            $transactionResponseType->getAvsResultCode()->willReturn(true);
+            $transactionResponseType->getCvvResultCode()->willReturn(true);
+            $transactionResponseType->getCavvResultCode()->willReturn(true);
+            $transactionResponseType->getRefTransID()->willReturn(true);
+            $transactionResponseType->getTransHash()->willReturn(true);
+            $transactionResponseType->getAccountNumber()->willReturn(true);
+            $transactionResponseType->getAccountType()->willReturn(true);
+            $transactionResponseType->getUserFields()->willReturn([]);
             $transactionResponseType->reveal();
         }
 
@@ -111,6 +124,7 @@ class AuthCaptureReponseTest extends TestCase
 
         $createTransactionResponse = $this->prophesize(CreateTransactionResponse::class);
         $createTransactionResponse->getTransactionResponse()->willReturn($transactionResponseType);
+        $createTransactionResponse->getProfileResponse()->willReturn(null);
         $createTransactionResponse->getMessages()->willReturn($messageType);
 
         return $createTransactionResponse->reveal();

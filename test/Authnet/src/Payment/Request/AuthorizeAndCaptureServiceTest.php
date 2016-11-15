@@ -8,11 +8,10 @@ use net\authorize\api\constants\ANetEnvironment;
 use net\authorize\util\HttpClient;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prophecy\Argument;
+use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
-use Soliant\Payment\Authnet\Payment\Request\SubsetsService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Hydrator\ClassMethods;
 
 /**
@@ -20,72 +19,34 @@ use Zend\Hydrator\ClassMethods;
  */
 class TransactionModeFactoryTest extends TestCase
 {
-    /*
-    public function testExceptionIsThrownWithSendRequestInvalidData()
-    {
-        $fieldMapConfig = $this->getFieldMapConfig();
-        $transactionMode = $this->getTransactionMode();
-        $merchantAuthentication = $this->getMerchantAuthentication();
-        $authorizeAndCaptureService = new AuthorizeAndCaptureService(
-            $merchantAuthentication,
-            $transactionMode,
-            $this->getFieldMapConfig(),
-            $this->getCustomerAddressTypeHydrator()
-        );
-        $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
-        $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
-        $this->assertAttributeSame($merchantAuthentication, 'merchantAuthentication', $authorizeAndCaptureService);
-        $this->expectException(\DomainException::class);
-        $authorizeAndCaptureService->sendRequest([]);
-    }
-
-    public function testExceptionIsThrownWithSendRequestInvalidPaymentType()
-    {
-        $fieldMapConfig = $this->getFieldMapConfig();
-        $transactionMode = $this->getTransactionMode();
-        $merchantAuthentication = $this->getMerchantAuthentication();
-        $authorizeAndCaptureService = new AuthorizeAndCaptureService(
-            $merchantAuthentication,
-            $transactionMode,
-            $this->getFieldMapConfig(),
-            $this->getCustomerAddressTypeHydrator()
-        );
-        $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
-        $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
-        $this->assertAttributeSame($merchantAuthentication, 'merchantAuthentication', $authorizeAndCaptureService);
-        $this->expectException(\DomainException::class);
-        $authorizeAndCaptureService->sendRequest([
-            'paymentType' => 'Wrong Type',
-            'amount' => '5.00',
-            'expirationDate' => '2017-01',
-            'cardNumber' => '4111111111111111'
-        ]);
-    }
-    */
-
     public function testSendRequestReturnsAuthCaptureResponse()
     {
-        $classMethodsHydrator = $this->getClassMethodsHydrator();
-        $fieldMapConfig = $this->getFieldMapConfig();
         $transactionMode = $this->getTransactionMode();
         $merchantAuthentication = $this->getMerchantAuthentication();
-        $createTransactionRequest = $this->getCreateTransactionRequest($merchantAuthentication);
         $transactionRequestType = $this->getTransactionRequestType();
-        $subsetService = new SubsetsService();
+        $createTransactionRequest = new CreateTransactionRequest();
+        $createTransactionRequest->setMerchantAuthentication($merchantAuthentication);
+        $transactionRequestHydrator = $this->getTransactionRequestHydrator(
+            AuthorizeAndCaptureService::PAYMENT_TRANSACTION_TYPE
+        );
         $authorizeAndCaptureService = new AuthorizeAndCaptureService(
+            $transactionRequestType,
             $createTransactionRequest,
             $transactionMode,
-            $fieldMapConfig,
-            $classMethodsHydrator,
-            $transactionRequestType,
-            $subsetService
+            $transactionRequestHydrator,
+            $this->getSubsetConfig()['subset'],
+            $this->getSubsetConfig()['subset_collection'],
+            $this->getSubsetConfig()['subset_parent'],
+            $this->getSubsetConfig()['subset_alias']
         );
         $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
-        $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
         $this->assertAttributeSame($createTransactionRequest, 'createTransactionRequest', $authorizeAndCaptureService);
-        $this->assertAttributeSame($classMethodsHydrator, 'hydrator', $authorizeAndCaptureService);
         $this->assertAttributeSame($transactionRequestType, 'transactionRequestType', $authorizeAndCaptureService);
-        $this->assertAttributeSame($subsetService, 'subsetsService', $authorizeAndCaptureService);
+        $this->assertAttributeSame(
+            $transactionRequestHydrator,
+            'transactionRequestHydrator',
+            $authorizeAndCaptureService
+        );
         $authCaptureResponse = $authorizeAndCaptureService->sendRequest(
             [
                 'paymentType' => 'creditCard',
@@ -95,6 +56,8 @@ class TransactionModeFactoryTest extends TestCase
             ]
         );
         $this->assertInstanceOf(AuthCaptureResponse::class, $authCaptureResponse);
+        $response = $authorizeAndCaptureService->getResponse();
+        $this->assertInstanceOf(AuthCaptureResponse::class, $response);
 
         /*
          * Can't properly test the HttpClient as prophecy doesn't allow reflection of public
@@ -117,34 +80,6 @@ class TransactionModeFactoryTest extends TestCase
          * $this->assertNotEquals('Error', $resultCode);
          */
     }
-
-    /*
-    public function testGetResponse()
-    {
-        $fieldMapConfig = $this->getFieldMapConfig();
-        $transactionMode = $this->getTransactionMode();
-        $merchantAuthentication = $this->getMerchantAuthentication();
-        $authorizeAndCaptureService = new AuthorizeAndCaptureService(
-            $merchantAuthentication,
-            $transactionMode,
-            $this->getFieldMapConfig(),
-            $this->getCustomerAddressTypeHydrator()
-        );
-        $this->assertAttributeSame($transactionMode, 'transactionMode', $authorizeAndCaptureService);
-        $this->assertAttributeSame($fieldMapConfig, 'fieldMap', $authorizeAndCaptureService);
-        $this->assertAttributeSame($merchantAuthentication, 'merchantAuthentication', $authorizeAndCaptureService);
-        $authorizeAndCaptureService->sendRequest(
-            [
-                'paymentType' => 'creditCard',
-                'amount' => '5.00',
-                'expirationDate' => '2017-01',
-                'cardNumber' => '4111111111111111'
-            ]
-        );
-        $response = $authorizeAndCaptureService->getResponse();
-        $this->assertInstanceOf(AuthCaptureResponse::class, $response);
-    }
-    */
 
     /**
      * @param string $mode
@@ -190,13 +125,31 @@ class TransactionModeFactoryTest extends TestCase
 
     /**
      * @param MerchantAuthenticationType $merchantAuthenticationType
+     * @param TransactionRequestType $transactionRequestType
      * @return CreateTransactionRequest
      */
-    protected function getCreateTransactionRequest(MerchantAuthenticationType $merchantAuthenticationType)
-    {
+    protected function getCreateTransactionRequest(
+        MerchantAuthenticationType $merchantAuthenticationType,
+        TransactionRequestType $transactionRequestType
+    ) {
         $createTransactionRequest = $this->prophesize(CreateTransactionRequest::class);
         $createTransactionRequest->setMerchantAuthentication($merchantAuthenticationType);
+        $createTransactionRequest->getMerchantAuthentication()->willReturn($merchantAuthenticationType);
+        $createTransactionRequest->setTransactionRequest(Argument::any())->willReturn(null);
+        $createTransactionRequest->getTransactionRequest()->willReturn(null);
+        $createTransactionRequest->getRefId()->willReturn($transactionRequestType);
         return $createTransactionRequest->reveal();
+    }
+
+    /**
+     * @param string $transactionRequestType
+     * @return object
+     */
+    protected function getTransactionRequestHydrator($transactionRequestType)
+    {
+        $transactionRequestHydrator = $this->prophesize(TransactionRequestHydrator::class);
+        $transactionRequestHydrator->setTransactionRequestType($transactionRequestType);
+        return $transactionRequestHydrator->reveal();
     }
 
     /**
@@ -213,13 +166,128 @@ class TransactionModeFactoryTest extends TestCase
     /**
      * @return array
      */
-    protected function getFieldMapConfig()
+    protected function getSubsetConfig()
     {
         return [
-            'paymentType' => 'paymentType',
-            'cardNumber' => 'cardNumber',
-            'expirationDate' => 'expirationDate',
-            'amount' => 'amount',
+            'subset' => [
+                'billTo' => net\authorize\api\contract\v1\CustomerAddressType::class,
+                'shipTo' => net\authorize\api\contract\v1\NameAndAddressType::class,
+                'lineItems' => net\authorize\api\contract\v1\LineItemType::class,
+                'tax' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'duty' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'shipping' => net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'order' => net\authorize\api\contract\v1\OrderType::class,
+                'bankAccount' => net\authorize\api\contract\v1\BankAccountType::class,
+                'creditCard' => net\authorize\api\contract\v1\CreditCardType::class,
+                'trackData' => net\authorize\api\contract\v1\CreditCardTrackType::class,
+                'profile' => net\authorize\api\contract\v1\CustomerProfilePaymentType::class,
+                'customer' => net\authorize\api\contract\v1\CustomerDataType::class,
+                'solution' => net\authorize\api\contract\v1\SolutionType::class,
+                'cardholderAuthentication' => net\authorize\api\contract\v1\CcAuthenticationType::class,
+                'retail' => net\authorize\api\contract\v1\TransRetailInfoType::class,
+                'transactionSettings' => net\authorize\api\contract\v1\SettingType::class,
+                'userFields' => net\authorize\api\contract\v1\UserFieldType::class,
+            ],
+            'subset_collection' => [
+                'lineItems',
+                'userFields',
+                'transactionSettings',
+            ],
+            'subset_parent' => [
+                'bankAccount' =>  net\authorize\api\contract\v1\PaymentType::class,
+                'trackData' =>  net\authorize\api\contract\v1\PaymentType::class,
+                'creditCard' =>  net\authorize\api\contract\v1\PaymentType::class,
+            ],
+            'subset_alias' => [
+                'bankAccount' => 'payment',
+                'trackData' => 'payment',
+                'creditCard' => 'payment',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData()
+    {
+        return [
+            'amount' => '5.00',
+            'employeeId' => '12345',
+            'order' => [
+                'invoiceNumber' => '12345',
+                'description' => 'Order Description',
+            ],
+            'lineItems' => [
+                [
+                    'itemId' => '12345',
+                    'name' => 'John Doe',
+                    'description' => 'Test Description',
+                    'quantity' => '1',
+                    'unitPrice' => '5.00',
+                    'taxable' => false,
+                ],
+                [
+                    'itemId' => '12346',
+                    'name' => 'John Doe 2',
+                    'description' => 'Test Description',
+                    'quantity' => '10',
+                    'unitPrice' => '10.00',
+                    'taxable' => true,
+                ],
+            ],
+            'tax' => [
+                'amount' => '5.00',
+                'name' => 'Tax Name',
+                'description' => 'Tax Description',
+            ],
+            'duty' => [
+                'amount' => '5.00',
+                'name' => 'Duty Name',
+                'description' => 'Duty Description',
+            ],
+            'shipping' => [
+                'amount' => '5.00',
+                'name' => 'Shipping Name',
+                'description' => 'Shipping Description',
+            ],
+            'taxExempt' => false,
+            'poNumber' => '12345',
+            'customer' => [
+                'type' => 'individual',
+                'id' => '12345',
+                'email' => 'test@test.com',
+            ],
+            'billTo' => [
+                'firstName' => 'John',
+                'lastName' => 'Doe',
+                'company' => 'Soliant Consulting',
+                'address' => '14 N Peoria St.',
+                'city' => 'Chicago',
+                'state' => 'IL',
+                'zip' => '60607',
+                'country' => 'US',
+                'phoneNumber' => '5555555555',
+                'faxNumber' => '5555555555',
+                'email' => 'test@test.com',
+            ],
+            'shipTo' => [
+                'firstName' => 'John',
+                'lastName' => 'Doe',
+                'company' => 'Soliant Consulting',
+                'address' => '14 N Peoria St.',
+                'city' => 'Chicago',
+                'state' => 'IL',
+                'zip' => '60607',
+                'country' => 'US',
+                'customerIP' => '0.0.0.0'
+            ],
+            'userFields' => [
+                [
+                    'name' => 'test field',
+                    'value' => 'test value',
+                ],
+            ],
         ];
     }
 
