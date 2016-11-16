@@ -1,12 +1,13 @@
 <?php
 namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
 
-use net\authorize\api\contract\v1\MerchantAuthenticationType;
+use net\authorize\api\contract\v1\CreateTransactionRequest;
 use PHPUnit_Framework_TestCase as TestCase;
-use Soliant\Payment\Authnet\Payment\Hydrator\CustomerAddressTypeHydrator;
+use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
 use Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -14,6 +15,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class AuthorizeAndCaptureServiceFactoryTest extends TestCase
 {
+
     public function testExceptionIsThrownWithoutConfig()
     {
         $factory = new AuthorizeAndCaptureServiceFactory();
@@ -24,50 +26,60 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
     public function testFactoryReturnsConfiguredInstance()
     {
         $config = $this->getConfig();
-        $merchantAuthenticationType = $this->prophesize(MerchantAuthenticationType::class)->reveal();
         $transactionMode = $this->prophesize(TransactionMode::class)->reveal();
-        $customerAddressTypeHydrator = $this->prophesize(CustomerAddressTypeHydrator::class)->reveal();
         $factory = new AuthorizeAndCaptureServiceFactory();
         $instance = $factory->createService($this->getContainer(
             $config,
-            $merchantAuthenticationType,
             $transactionMode,
-            $customerAddressTypeHydrator
+            $this->getHydratorManager($this->getTransactionRequestHydrator()),
+            $this->prophesize(CreateTransactionRequest::class)->reveal()
         ));
         $this->assertInstanceOf(AuthorizeAndCaptureService::class, $instance);
-        $this->assertAttributeSame($merchantAuthenticationType, 'merchantAuthentication', $instance);
         $this->assertAttributeSame($transactionMode, 'transactionMode', $instance);
-        $this->assertAttributeSame(
-            $config['soliant_payment_authnet']['service']['authorizationAndCapture']['field_map'],
-            'fieldMap',
-            $instance
-        );
     }
 
     /**
      * @param array $config
-     * @param MerchantAuthenticationType $merchantAuthenticationType
      * @param TransactionMode $transactionMode
-     * @param CustomerAddressTypeHydrator $customerAddressTypeHydrator
-     * @return ServiceLocatorInterface
+     * @param HydratorPluginManager $hydratorPluginManager
+     * @param CreateTransactionRequest $createTransactionRequest
+     * @return object
      */
     protected function getContainer(
         array $config,
-        MerchantAuthenticationType $merchantAuthenticationType = null,
         TransactionMode $transactionMode = null,
-        CustomerAddressTypeHydrator $customerAddressTypeHydrator = null
+        HydratorPluginManager $hydratorPluginManager = null,
+        CreateTransactionRequest $createTransactionRequest = null
     ) {
-        $hydratorManager = $this->prophesize(ServiceLocatorInterface::class);
-        $hydratorManager->get(CustomerAddressTypeHydrator::class)->willReturn($customerAddressTypeHydrator);
+        $hydratorManager = $this->prophesize(HydratorPluginManager::class);
         $hydratorManager->reveal();
 
         $container = $this->prophesize(ServiceLocatorInterface::class);
         $container->get('config')->willReturn($config);
-        $container->get(MerchantAuthenticationType::class)->willReturn($merchantAuthenticationType);
+        $container->get(CreateTransactionRequest::class)->willReturn($createTransactionRequest);
         $container->get(TransactionMode::class)->willReturn($transactionMode);
-        $container->get('HydratorManager')->willReturn($hydratorManager);
+        $container->get('HydratorManager')->willReturn($hydratorPluginManager);
 
         return $container->reveal();
+    }
+
+    /**
+     * @return HydratorPluginManager
+     */
+    protected function getHydratorManager(TransactionRequestHydrator $transactionRequestHydrator)
+    {
+        $hydratorManager = $this->prophesize(HydratorPluginManager::class);
+        $hydratorManager->get(TransactionRequestHydrator::class)->willReturn($transactionRequestHydrator);
+        return $hydratorManager->reveal();
+    }
+
+    /**
+     * @return TransactionRequestHydrator
+     */
+    protected function getTransactionRequestHydrator()
+    {
+        $transactionRequestHydrator = $this->prophesize(TransactionRequestHydrator::class);
+        return $transactionRequestHydrator->reveal();
     }
 
     /**
@@ -77,16 +89,10 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
     {
         return [
             'soliant_payment_authnet' => [
-                'service' => [
-                    'authorizationAndCapture' => [
-                        'field_map' => [
-                            'paymentType' => 'paymentType',
-                            'cardNumber' => 'cardNumber',
-                            'expirationDate' => 'expirationDate',
-                            'amount' => 'amount',
-                        ],
-                    ],
-                ],
+                'subset' => [],
+                'subset_collection' => [],
+                'subset_parent' => [],
+                'subset_alias' => [],
             ],
         ];
     }
