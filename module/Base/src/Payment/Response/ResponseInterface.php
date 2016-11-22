@@ -2,20 +2,20 @@
 
 namespace Soliant\Payment\Base\Payment\Response;
 
-abstract class AbstractResponse
+interface ResponseInterface
 {
     /**
      * @return bool
      */
-    abstract public function isSuccess();
+    public function isSuccess();
 
     /**
      * @return array
      */
-    abstract public function getMessages();
+    public function getMessages();
 
     /**
      * @return array
      */
-    abstract public function getData();
+    public function getData();
 }

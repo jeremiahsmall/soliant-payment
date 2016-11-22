@@ -3,11 +3,16 @@ namespace Soliant\Payment\Authnet\Payment\Response;
 
 use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\MessagesType;
+use net\authorize\api\contract\v1\TransactionResponseType;
 use net\authorize\api\contract\v1\TransactionResponseType\ErrorsAType\ErrorAType;
-use Soliant\Payment\Base\Payment\Response\AbstractResponse;
+use net\authorize\api\contract\v1\UserFieldType;
+use Soliant\Payment\Base\Payment\Response\ResponseInterface;
 
-class AuthCaptureResponse extends AbstractResponse
+class AuthCaptureResponse implements ResponseInterface
 {
+    const TRANSACTION_RESPONSE = 'transactionResponse';
+    const PROFILE_RESPONSE = 'profileResponse';
+
     /**
      * @var CreateTransactionResponse
      */
@@ -31,30 +36,73 @@ class AuthCaptureResponse extends AbstractResponse
         $this->createTransactionResponse = $createTransactionResponse;
     }
 
+    /**
+     * @return bool
+     */
     public function isSuccess()
     {
         $transactionResponse = $this->createTransactionResponse->getTransactionResponse();
         $resultCode = $this->createTransactionResponse->getMessages()->getResultCode();
 
         if ($resultCode === 'Error' && null === $transactionResponse) {
-            $this->messages = $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages());
+            $this->messages = [
+                self::TRANSACTION_RESPONSE =>
+                    $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+            ];
             return false;
         }
 
         if ($transactionResponse->getResponseCode() !== "1") {
-            $this->messages = array_merge(
-                $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
-                $this->transactionResponseErrorsToArray($transactionResponse->getErrors())
-            );
+            $this->messages = [
+                self::TRANSACTION_RESPONSE => array_merge(
+                    $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+                    $this->transactionResponseErrorsToArray($transactionResponse->getErrors())
+                ),
+            ];
             return false;
         }
 
-        $this->messages = $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages());
+        $this->messages = [
+            self::TRANSACTION_RESPONSE =>
+                $this->createTransactionErrorToArray($this->createTransactionResponse->getMessages()),
+        ];
 
         $this->data = [
-            'authorizationCode' => $transactionResponse->getAuthCode(),
-            'transactionId' => $transactionResponse->getTransId(),
+            self::TRANSACTION_RESPONSE => [
+                'responseCode' => $transactionResponse->getResponseCode(),
+                'authCode' => $transactionResponse->getAuthCode(),
+                'avsResultCode' => $transactionResponse->getAvsResultCode(),
+                'ccvResultCode' => $transactionResponse->getCvvResultCode(),
+                'cavvResultCode' => $transactionResponse->getCavvResultCode(),
+                'transId' => $transactionResponse->getTransId(),
+                'refTransID' => $transactionResponse->getRefTransID(),
+                'transHash' => $transactionResponse->getTransHash(),
+                'accountNumber' => $transactionResponse->getAccountNumber(),
+                'accountType' => $transactionResponse->getAccountType(),
+                'userFields' => $this->getUserFieldsFromTransactionResponse($transactionResponse),
+            ],
         ];
+
+        $profileResponse = $this->createTransactionResponse->getProfileResponse();
+
+        if (null !== $profileResponse) {
+            $this->messages = array_merge(
+                $this->messages,
+                [self::PROFILE_RESPONSE => $this->createTransactionErrorToArray($profileResponse->getMessages()),]
+            );
+
+            $this->data = array_merge(
+                $this->data,
+                [
+                    'profileResponse' => [
+                        'resultCode' => $profileResponse->getMessages()->getResultCode(),
+                        'customerProfileId' => $profileResponse->getCustomerProfileId(),
+                        'customerPaymentProfileIdList' => $profileResponse->getCustomerPaymentProfileIdList(),
+                        'customerShippingAddressIdList' => $profileResponse->getCustomerShippingAddressIdList(),
+                    ],
+                ]
+            );
+        }
 
         return true;
     }
@@ -108,5 +156,23 @@ class AuthCaptureResponse extends AbstractResponse
         }
 
         return $messages;
+    }
+
+    /**
+     * @param TransactionResponseType $transactionResponseType
+     * @return array
+     */
+    private function getUserFieldsFromTransactionResponse(TransactionResponseType $transactionResponseType)
+    {
+        $userFields = null;
+        $responseUserFields = $transactionResponseType->getUserFields();
+        if (null !== $responseUserFields && is_array($responseUserFields)) {
+            /** @var UserFieldType $responseUserField */
+            foreach ($responseUserFields as $responseUserField) {
+                $userFields[] = ['name' => $responseUserField->getName(), 'value' => $responseUserField->getValue(),];
+            }
+        }
+
+        return $userFields;
     }
 }
