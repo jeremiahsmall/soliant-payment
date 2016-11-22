@@ -94,7 +94,7 @@ class AuthCaptureResponse implements ResponseInterface
             $this->data = array_merge(
                 $this->data,
                 [
-                    'profileResponse' => [
+                    self::PROFILE_RESPONSE => [
                         'resultCode' => $profileResponse->getMessages()->getResultCode(),
                         'customerProfileId' => $profileResponse->getCustomerProfileId(),
                         'customerPaymentProfileIdList' => $profileResponse->getCustomerPaymentProfileIdList(),

@@ -16,6 +16,7 @@ use Zend\Hydrator\ClassMethods;
 
 /**
  * @covers Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService
+ * @covers Soliant\Payment\Authnet\Payment\Request\AbstractRequestService
  */
 class TransactionModeFactoryTest extends TestCase
 {
@@ -47,14 +48,7 @@ class TransactionModeFactoryTest extends TestCase
             'transactionRequestHydrator',
             $authorizeAndCaptureService
         );
-        $authCaptureResponse = $authorizeAndCaptureService->sendRequest(
-            [
-                'paymentType' => 'creditCard',
-                'amount' => '5.00',
-                'expirationDate' => '2017-01',
-                'cardNumber' => '4111111111111111'
-            ]
-        );
+        $authCaptureResponse = $authorizeAndCaptureService->sendRequest($this->getData());
         $this->assertInstanceOf(AuthCaptureResponse::class, $authCaptureResponse);
         $response = $authorizeAndCaptureService->getResponse();
         $this->assertInstanceOf(AuthCaptureResponse::class, $response);
@@ -170,23 +164,23 @@ class TransactionModeFactoryTest extends TestCase
     {
         return [
             'subset' => [
-                'billTo' => net\authorize\api\contract\v1\CustomerAddressType::class,
-                'shipTo' => net\authorize\api\contract\v1\NameAndAddressType::class,
-                'lineItems' => net\authorize\api\contract\v1\LineItemType::class,
-                'tax' => net\authorize\api\contract\v1\ExtendedAmountType::class,
-                'duty' => net\authorize\api\contract\v1\ExtendedAmountType::class,
-                'shipping' => net\authorize\api\contract\v1\ExtendedAmountType::class,
-                'order' => net\authorize\api\contract\v1\OrderType::class,
-                'bankAccount' => net\authorize\api\contract\v1\BankAccountType::class,
-                'creditCard' => net\authorize\api\contract\v1\CreditCardType::class,
-                'trackData' => net\authorize\api\contract\v1\CreditCardTrackType::class,
-                'profile' => net\authorize\api\contract\v1\CustomerProfilePaymentType::class,
-                'customer' => net\authorize\api\contract\v1\CustomerDataType::class,
-                'solution' => net\authorize\api\contract\v1\SolutionType::class,
-                'cardholderAuthentication' => net\authorize\api\contract\v1\CcAuthenticationType::class,
-                'retail' => net\authorize\api\contract\v1\TransRetailInfoType::class,
-                'transactionSettings' => net\authorize\api\contract\v1\SettingType::class,
-                'userFields' => net\authorize\api\contract\v1\UserFieldType::class,
+                'billTo' => \net\authorize\api\contract\v1\CustomerAddressType::class,
+                'shipTo' => \net\authorize\api\contract\v1\NameAndAddressType::class,
+                'lineItems' => \net\authorize\api\contract\v1\LineItemType::class,
+                'tax' => \net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'duty' => \net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'shipping' => \net\authorize\api\contract\v1\ExtendedAmountType::class,
+                'order' => \net\authorize\api\contract\v1\OrderType::class,
+                'bankAccount' => \net\authorize\api\contract\v1\BankAccountType::class,
+                'creditCard' => \net\authorize\api\contract\v1\CreditCardType::class,
+                'trackData' => \net\authorize\api\contract\v1\CreditCardTrackType::class,
+                'profile' => \net\authorize\api\contract\v1\CustomerProfilePaymentType::class,
+                'customer' => \net\authorize\api\contract\v1\CustomerDataType::class,
+                'solution' => \net\authorize\api\contract\v1\SolutionType::class,
+                'cardholderAuthentication' => \net\authorize\api\contract\v1\CcAuthenticationType::class,
+                'retail' => \net\authorize\api\contract\v1\TransRetailInfoType::class,
+                'transactionSettings' => \net\authorize\api\contract\v1\SettingType::class,
+                'userFields' => \net\authorize\api\contract\v1\UserFieldType::class,
             ],
             'subset_collection' => [
                 'lineItems',
@@ -194,9 +188,9 @@ class TransactionModeFactoryTest extends TestCase
                 'transactionSettings',
             ],
             'subset_parent' => [
-                'bankAccount' =>  net\authorize\api\contract\v1\PaymentType::class,
-                'trackData' =>  net\authorize\api\contract\v1\PaymentType::class,
-                'creditCard' =>  net\authorize\api\contract\v1\PaymentType::class,
+                'bankAccount' =>  \net\authorize\api\contract\v1\PaymentType::class,
+                'trackData' =>  \net\authorize\api\contract\v1\PaymentType::class,
+                'creditCard' =>  \net\authorize\api\contract\v1\PaymentType::class,
             ],
             'subset_alias' => [
                 'bankAccount' => 'payment',
@@ -217,6 +211,15 @@ class TransactionModeFactoryTest extends TestCase
             'order' => [
                 'invoiceNumber' => '12345',
                 'description' => 'Order Description',
+            ],
+            'creditCard' => [
+                'cardNumber' => '4111111111111111',
+                'expirationDate' => '2017-01',
+                'cardCode' => '123',
+            ],
+            'trackData' => [
+                'track1' => 'Track 1 Data',
+                'track2' => 'Track 2 Data',
             ],
             'lineItems' => [
                 [

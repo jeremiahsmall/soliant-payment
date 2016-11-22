@@ -11,7 +11,7 @@ use Zend\Hydrator\HydratorPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthorizeAndCaptureServiceFactory
+ * @covers \Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory
  */
 class AuthorizeAndCaptureServiceFactoryTest extends TestCase
 {

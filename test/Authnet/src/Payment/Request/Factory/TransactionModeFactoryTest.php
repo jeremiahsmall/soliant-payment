@@ -7,7 +7,7 @@ use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Authentication\Factory\TransactionModeFactory
+ * @covers \Soliant\Payment\Authnet\Payment\Request\Factory\TransactionModeFactory
  */
 class TransactionModeFactoryTest extends TestCase
 {

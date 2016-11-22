@@ -33,13 +33,9 @@ class TransactionRequestHydrator extends ClassMethods
      */
     public function hydrate(array $data, $object, $subset = null)
     {
-        if (false !== $subset) {
-            $fieldMap = $this->getFieldMap($subset);
-            $mappedData = $this->applyFieldMap($data, $fieldMap, array_keys($fieldMap));
-            return parent::hydrate($mappedData, $object);
-        }
-
-        return parent::hydrate($data, $object);
+        $fieldMap = $this->getFieldMap($subset);
+        $mappedData = $this->applyFieldMap($data, $fieldMap, array_keys($fieldMap));
+        return parent::hydrate($mappedData, $object);
     }
 
     /**
