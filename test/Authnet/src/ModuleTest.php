@@ -3,10 +3,9 @@ namespace Soliant\Payment\AuthentTest;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Module;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Module
+ * @covers \Soliant\Payment\Authnet\Module
  */
 class ModuleTest extends TestCase
 {

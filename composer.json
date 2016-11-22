@@ -76,13 +76,14 @@
     "scripts": {
         "check": [
             "@cs",
-            "@test"
+            "@test-html-coverage"
         ],
         "coveralls": "coveralls",
         "cs": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover clover.xml"
+        "test-coverage": "phpunit --coverage-clover clover.xml",
+        "test-html-coverage": "phpunit --coverage-html build/coverage"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

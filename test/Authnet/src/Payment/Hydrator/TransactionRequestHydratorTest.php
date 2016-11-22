@@ -9,9 +9,9 @@ use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService
+ * @covers \Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator
  */
-class TransactionRequestHydratorFactoryTest extends TestCase
+class TransactionRequestHydratorTest extends TestCase
 {
     public function testAuthorizeAndCaptureServiceHydrateTransactionRequestSubset()
     {
@@ -20,8 +20,12 @@ class TransactionRequestHydratorFactoryTest extends TestCase
         $customerAddressType = $this->getCustomerAddressType();
         $transactionRequestHydrator = new TransactionRequestHydrator($this->getServiceConfig());
         $transactionRequestHydrator->setTransactionRequestType(AuthorizeAndCaptureService::PAYMENT_TRANSACTION_TYPE);
-        $customerAddressType = $transactionRequestHydrator->hydrate($data[$subset], $customerAddressType, $subset);
-        $this->assertInstanceOf(CustomerAddressType::class, $customerAddressType);
+        $customerAddressTypeReturn = $transactionRequestHydrator->hydrate(
+            $data[$subset],
+            $customerAddressType,
+            $subset
+        );
+        $this->assertInstanceOf(CustomerAddressType::class, $customerAddressTypeReturn);
     }
 
     public function testAuthorizeAndCaptureServiceHydrateTransactionRequest()
@@ -32,8 +36,8 @@ class TransactionRequestHydratorFactoryTest extends TestCase
         );
         $transactionRequestHydrator = new TransactionRequestHydrator($this->getServiceConfig());
         $transactionRequestHydrator->setTransactionRequestType(AuthorizeAndCaptureService::PAYMENT_TRANSACTION_TYPE);
-        $transactionRequestType = $transactionRequestHydrator->hydrate($data, $transactionRequestType);
-        $this->assertInstanceOf(TransactionRequestType::class, $transactionRequestType);
+        $transactionRequestTypeReturn = $transactionRequestHydrator->hydrate($data, $transactionRequestType);
+        $this->assertInstanceOf(TransactionRequestType::class, $transactionRequestTypeReturn);
     }
 
     /**
