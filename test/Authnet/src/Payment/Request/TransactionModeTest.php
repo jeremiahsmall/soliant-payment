@@ -6,7 +6,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Request\TransactionMode
+ * @covers \Soliant\Payment\Authnet\Payment\Request\TransactionMode
  */
 class TransactionModeTest extends TestCase
 {

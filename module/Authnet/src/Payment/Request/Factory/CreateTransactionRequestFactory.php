@@ -3,15 +3,14 @@ namespace Soliant\Payment\Authnet\Payment\Request\Factory;
 
 use net\authorize\api\contract\v1\CreateTransactionRequest;
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class CreateTransactionRequestFactory implements FactoryInterface
+class CreateTransactionRequestFactory
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $sm)
     {
         $createTransactionRequest = new CreateTransactionRequest();
-        $createTransactionRequest->setMerchantAuthentication($serviceLocator->get(MerchantAuthenticationType::class));
+        $createTransactionRequest->setMerchantAuthentication($sm->get(MerchantAuthenticationType::class));
         return $createTransactionRequest;
     }
 }

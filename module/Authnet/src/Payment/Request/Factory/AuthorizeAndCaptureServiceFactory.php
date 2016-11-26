@@ -7,15 +7,13 @@ use OutOfBoundsException;
 use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class AuthorizeAndCaptureServiceFactory implements FactoryInterface
+class AuthorizeAndCaptureServiceFactory
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $sm)
     {
-        $hydratorManager = $serviceLocator->get('HydratorManager');
-        $config = $serviceLocator->get('config');
+        $config = $sm->get('config');
 
         if (!array_key_exists('soliant_payment_authnet', $config)
             || !array_key_exists('subset', $config['soliant_payment_authnet'])
@@ -27,13 +25,13 @@ class AuthorizeAndCaptureServiceFactory implements FactoryInterface
         }
 
         /** @var RequestHydrator $transactionRequestHydrator */
-        $transactionRequestHydrator = $hydratorManager->get(TransactionRequestHydrator::class);
+        $transactionRequestHydrator = $sm->get(TransactionRequestHydrator::class);
         $transactionRequestHydrator->setTransactionRequestType(AuthorizeAndCaptureService::PAYMENT_TRANSACTION_TYPE);
 
         return new AuthorizeAndCaptureService(
             new TransactionRequestType(),
-            $serviceLocator->get(CreateTransactionRequest::class),
-            $serviceLocator->get(TransactionMode::class),
+            $sm->get(CreateTransactionRequest::class),
+            $sm->get(TransactionMode::class),
             $transactionRequestHydrator,
             $config['soliant_payment_authnet']['subset'],
             $config['soliant_payment_authnet']['subset_collection'],

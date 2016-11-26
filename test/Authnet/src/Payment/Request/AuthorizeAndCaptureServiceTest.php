@@ -15,8 +15,8 @@ use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
 use Zend\Hydrator\ClassMethods;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService
- * @covers Soliant\Payment\Authnet\Payment\Request\AbstractRequestService
+ * @covers \Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService
+ * @covers \Soliant\Payment\Authnet\Payment\Request\AbstractRequestService
  */
 class TransactionModeFactoryTest extends TestCase
 {

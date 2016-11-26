@@ -1,7 +1,6 @@
 <?php
 namespace Soliant\Payment\Authnet\Payment\Hydrator;
 
-use net\authorize\api\contract\v1\TransactionRequestType;
 use Zend\Hydrator\ClassMethods;
 
 class TransactionRequestHydrator extends ClassMethods

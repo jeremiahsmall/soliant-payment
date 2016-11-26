@@ -3,15 +3,13 @@ namespace Soliant\Payment\Authnet\Payment\Hydrator\Factory;
 
 use OutOfBoundsException;
 use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class TransactionRequestHydratorFactory implements FactoryInterface
+class TransactionRequestHydratorFactory
 {
-    public function createService(ServiceLocatorInterface $hydratorManager)
+    public function __invoke(ContainerInterface $sm)
     {
-        $serviceLocator = $hydratorManager->getServiceLocator();
-        $config = $serviceLocator->get('config');
+        $config = $sm->get('config');
 
         if (!array_key_exists('soliant_payment_authnet', $config)
             || !array_key_exists('service', $config['soliant_payment_authnet'])
