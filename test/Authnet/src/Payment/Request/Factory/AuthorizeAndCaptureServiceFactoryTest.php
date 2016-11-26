@@ -1,14 +1,13 @@
 <?php
 namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
 
+use Interop\Container\ContainerInterface;
 use net\authorize\api\contract\v1\CreateTransactionRequest;
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator;
 use Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory;
 use Soliant\Payment\Authnet\Payment\Request\AuthorizeAndCaptureService;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
-use Zend\Hydrator\HydratorPluginManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @covers \Soliant\Payment\Authnet\Payment\Request\Factory\AuthorizeAndCaptureServiceFactory
@@ -20,7 +19,7 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
     {
         $factory = new AuthorizeAndCaptureServiceFactory();
         $this->expectException(\OutOfBoundsException::class);
-        $factory->createService($this->getContainer([]));
+        $factory->__invoke($this->getContainer([]));
     }
 
     public function testFactoryReturnsConfiguredInstance()
@@ -28,11 +27,11 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
         $config = $this->getConfig();
         $transactionMode = $this->prophesize(TransactionMode::class)->reveal();
         $factory = new AuthorizeAndCaptureServiceFactory();
-        $instance = $factory->createService($this->getContainer(
+        $instance = $factory->__invoke($this->getContainer(
             $config,
             $transactionMode,
-            $this->getHydratorManager($this->getTransactionRequestHydrator()),
-            $this->prophesize(CreateTransactionRequest::class)->reveal()
+            $this->prophesize(CreateTransactionRequest::class)->reveal(),
+            $this->getTransactionRequestHydrator()
         ));
         $this->assertInstanceOf(AuthorizeAndCaptureService::class, $instance);
         $this->assertAttributeSame($transactionMode, 'transactionMode', $instance);
@@ -41,36 +40,23 @@ class AuthorizeAndCaptureServiceFactoryTest extends TestCase
     /**
      * @param array $config
      * @param TransactionMode $transactionMode
-     * @param HydratorPluginManager $hydratorPluginManager
      * @param CreateTransactionRequest $createTransactionRequest
-     * @return object
+     * @param TransactionRequestHydrator $transactionRequestHydrator
+     * @return ContainerInterface
      */
     protected function getContainer(
         array $config,
         TransactionMode $transactionMode = null,
-        HydratorPluginManager $hydratorPluginManager = null,
-        CreateTransactionRequest $createTransactionRequest = null
+        CreateTransactionRequest $createTransactionRequest = null,
+        TransactionRequestHydrator $transactionRequestHydrator = null
     ) {
-        $hydratorManager = $this->prophesize(HydratorPluginManager::class);
-        $hydratorManager->reveal();
-
-        $container = $this->prophesize(ServiceLocatorInterface::class);
+        $container = $this->prophesize(ContainerInterface::class);
         $container->get('config')->willReturn($config);
         $container->get(CreateTransactionRequest::class)->willReturn($createTransactionRequest);
         $container->get(TransactionMode::class)->willReturn($transactionMode);
-        $container->get('HydratorManager')->willReturn($hydratorPluginManager);
+        $container->get(TransactionRequestHydrator::class)->willReturn($transactionRequestHydrator);
 
         return $container->reveal();
-    }
-
-    /**
-     * @return HydratorPluginManager
-     */
-    protected function getHydratorManager(TransactionRequestHydrator $transactionRequestHydrator)
-    {
-        $hydratorManager = $this->prophesize(HydratorPluginManager::class);
-        $hydratorManager->get(TransactionRequestHydrator::class)->willReturn($transactionRequestHydrator);
-        return $hydratorManager->reveal();
     }
 
     /**

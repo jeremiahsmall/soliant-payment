@@ -13,10 +13,6 @@ return [
                 Soliant\Payment\Authnet\Payment\Request\Factory\TransactionModeFactory::class,
             net\authorize\api\contract\v1\CreateTransactionRequest::class =>
                 Soliant\Payment\Authnet\Payment\Request\Factory\CreateTransactionRequestFactory::class,
-        ],
-    ],
-    'hydrators' => [
-        'factories' => [
             Soliant\Payment\Authnet\Payment\Hydrator\TransactionRequestHydrator::class =>
                 Soliant\Payment\Authnet\Payment\Hydrator\Factory\TransactionRequestHydratorFactory::class,
         ],

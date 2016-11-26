@@ -1,10 +1,10 @@
 <?php
 namespace Soliant\Payment\AuthentTest\Payment\Request\Factory;
 
+use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Request\Factory\TransactionModeFactory;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @covers \Soliant\Payment\Authnet\Payment\Request\Factory\TransactionModeFactory
@@ -15,25 +15,25 @@ class TransactionModeFactoryTest extends TestCase
     {
         $factory = new TransactionModeFactory();
         $this->expectException(\OutOfBoundsException::class);
-        $factory->createService($this->getContainer([]));
+        $factory->__invoke($this->getContainer([]));
     }
 
     public function testFactoryReturnsConfiguredInstance()
     {
         $config = $this->getConfig();
         $factory = new TransactionModeFactory();
-        $instance = $factory->createService($this->getContainer($config));
+        $instance = $factory->__invoke($this->getContainer($config));
         $this->assertInstanceOf(TransactionMode::class, $instance);
         $this->assertAttributeSame($config['soliant_payment_authnet']['mode'], 'mode', $instance);
     }
 
     /**
      * @param array $config
-     * @return ServiceLocatorInterface
+     * @return ContainerInterface
      */
     protected function getContainer(array $config)
     {
-        $container = $this->prophesize(ServiceLocatorInterface::class);
+        $container = $this->prophesize(ContainerInterface::class);
         $container->get('config')->willReturn($config);
 
         return $container->reveal();

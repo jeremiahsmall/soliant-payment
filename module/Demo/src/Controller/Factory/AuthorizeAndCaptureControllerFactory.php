@@ -2,15 +2,12 @@
 namespace Soliant\Payment\Demo\Controller\Factory;
 
 use Soliant\Payment\Demo\Controller\AuthorizeAndCaptureController;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class AuthorizeAndCaptureControllerFactory implements FactoryInterface
+class AuthorizeAndCaptureControllerFactory
 {
-    public function createService(ServiceLocatorInterface $controllerManager)
+    public function __invoke(ContainerInterface $sm)
     {
-        $serviceLocator = $controllerManager->getServiceLocator();
-
-        return new AuthorizeAndCaptureController($serviceLocator->get('authorizeAndCapture'));
+        return new AuthorizeAndCaptureController($sm->get('authorizeAndCapture'));
     }
 }

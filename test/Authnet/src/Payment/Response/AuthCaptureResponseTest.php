@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse
+ * @covers \Soliant\Payment\Authnet\Payment\Response\AuthCaptureResponse
  */
 class AuthCaptureReponseTest extends TestCase
 {

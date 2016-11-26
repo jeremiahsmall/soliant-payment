@@ -1,13 +1,13 @@
 <?php
 namespace Soliant\Payment\AuthentTest\Payment\Authentication\Factory;
 
+use Interop\Container\ContainerInterface;
 use net\authorize\api\contract\v1\MerchantAuthenticationType;
 use PHPUnit_Framework_TestCase as TestCase;
 use Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthenticationFactory;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * @covers Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthenticationFactory
+ * @covers \Soliant\Payment\Authnet\Payment\Authentication\Factory\AuthenticationFactory
  */
 class AuthenticationFactoryTest extends TestCase
 {
@@ -15,13 +15,13 @@ class AuthenticationFactoryTest extends TestCase
     {
         $factory = new AuthenticationFactory();
         $this->expectException(\OutOfBoundsException::class);
-        $factory->createService($this->getContainer([]));
+        $factory->__invoke($this->getContainer([]));
     }
 
     public function testFactoryReturnsConfiguredInstance()
     {
         $factory = new AuthenticationFactory();
-        $instance = $factory->createService($this->getContainer(
+        $instance = $factory->__invoke($this->getContainer(
             [
                 'soliant_payment_authnet' => [
                     'login' => null,
@@ -36,11 +36,11 @@ class AuthenticationFactoryTest extends TestCase
 
     /**
      * @param array $config
-     * @return ServiceLocatorInterface
+     * @return ContainerInterface
      */
     protected function getContainer(array $config)
     {
-        $container = $this->prophesize(ServiceLocatorInterface::class);
+        $container = $this->prophesize(ContainerInterface::class);
         $container->get('config')->willReturn($config);
 
         return $container->reveal();

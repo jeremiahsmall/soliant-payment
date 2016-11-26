@@ -3,14 +3,13 @@ namespace Soliant\Payment\Authnet\Payment\Request\Factory;
 
 use OutOfBoundsException;
 use Soliant\Payment\Authnet\Payment\Request\TransactionMode;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class TransactionModeFactory implements FactoryInterface
+class TransactionModeFactory
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $sm)
     {
-        $config = $serviceLocator->get('config');
+        $config = $sm->get('config');
 
         if (!array_key_exists('soliant_payment_authnet', $config)
             || !array_key_exists('mode', $config['soliant_payment_authnet'])

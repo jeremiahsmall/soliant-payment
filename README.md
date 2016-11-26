@@ -16,7 +16,7 @@ Via composer
 ```
 {
     "require": {
-        "soliantconsulting/soliant-payment": "dev-master"
+        "soliantconsulting/soliant-payment": "^2.0.0" // ZF2 v1.0.1
     },
     "repositories": [
         {
@@ -30,6 +30,24 @@ Via composer
 ```
 
 ### Usage
+
+ZF3 v2.0.0
+
+Add modules to modules.config.php
+
+```
+return [
+    'Zend\Filter',
+    'Zend\Hydrator',
+    'Zend\Router',
+    'Zend\Validator',
+    'Soliant\Payment\Base',
+    'Soliant\Payment\Authnet',
+    'Soliant\Payment\Demo', // (Optional) Access demo via /soliant-payment route
+];
+```
+
+ZF2 v1.0.1
 
 Add modules to project config/application.config.php.
 
@@ -51,6 +69,17 @@ config/autoload/[Payment Module].payment.local.php
 Inject the desired payment service via factory using one of the following available aliases. 
 
 "authorizeAndCapture" // Authorize and capture credit card or eCheck 
+
+ZF3 v2.0.0
+
+```
+public function __invoke(ContainerInterface $sm)
+{
+    return new MyService($sm->get("[Service Alias]"));
+}
+```
+
+ZF2 v1.0.1
 
 ```
 public function createService(ServiceLocatorInterface $serviceLocator)
